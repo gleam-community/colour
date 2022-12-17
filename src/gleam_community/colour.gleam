@@ -16,14 +16,6 @@ pub opaque type Colour {
 pub type Color =
   Colour
 
-pub type Rgba {
-  Rgba(r: Float, g: Float, b: Float, a: Float)
-}
-
-pub type Hsla {
-  Hsla(h: Float, s: Float, l: Float, a: Float)
-}
-
 // UTILITY --------------------------------------------------------------------
 
 fn valid_colour_value(c: Float) -> Result(Float, Nil) {
@@ -111,46 +103,37 @@ pub fn rgb255(r red: Int, g green: Int, b blue: Int) -> Result(Colour, Nil) {
 }
 
 pub fn rgb(r red: Float, g green: Float, b blue: Float) -> Result(Colour, Nil) {
-  try r = valid_colour_value(red)
-  try g = valid_colour_value(green)
-  try b = valid_colour_value(blue)
+  use r <- result.then(valid_colour_value(red))
+  use g <- result.then(valid_colour_value(green))
+  use b <- result.then(valid_colour_value(blue))
 
   Ok(Colour(r: r, g: g, b: b, a: 1.0))
 }
 
-pub fn rgba(
+pub fn from_rgba(
   r red: Float,
   g green: Float,
   b blue: Float,
   a alpha: Float,
 ) -> Result(Colour, Nil) {
-  try r = valid_colour_value(red)
-  try g = valid_colour_value(green)
-  try b = valid_colour_value(blue)
-  try a = valid_colour_value(alpha)
+  use r <- result.then(valid_colour_value(red))
+  use g <- result.then(valid_colour_value(green))
+  use b <- result.then(valid_colour_value(blue))
+  use a <- result.then(valid_colour_value(alpha))
 
   Ok(Colour(r: r, g: g, b: b, a: a))
 }
 
-pub fn from_rgba(rgba: Rgba) -> Result(Colour, Nil) {
-  try r = valid_colour_value(rgba.r)
-  try g = valid_colour_value(rgba.g)
-  try b = valid_colour_value(rgba.b)
-  try a = valid_colour_value(rgba.a)
-
-  Ok(Colour(r: r, g: g, b: b, a: a))
-}
-
-pub fn hsla(
+pub fn from_hsla(
   h hue: Float,
   s saturation: Float,
   l lightness: Float,
   a alpha: Float,
 ) -> Result(Colour, Nil) {
-  try h = valid_colour_value(hue)
-  try s = valid_colour_value(saturation)
-  try l = valid_colour_value(lightness)
-  try a = valid_colour_value(alpha)
+  use h <- result.then(valid_colour_value(hue))
+  use s <- result.then(valid_colour_value(saturation))
+  use l <- result.then(valid_colour_value(lightness))
+  use a <- result.then(valid_colour_value(alpha))
 
   let m2 = case l <=. 0.5 {
     True -> l *. { s +. 1.0 }
@@ -171,12 +154,7 @@ pub fn hsl(
   s saturation: Float,
   l lightness: Float,
 ) -> Result(Colour, Nil) {
-  hsla(hue, saturation, lightness, 1.0)
-}
-
-pub fn from_hsla(hsl: Hsla) -> Result(Colour, Nil) {
-  let Hsla(h, s, l, a) = hsl
-  hsla(h, s, l, a)
+  from_hsla(hue, saturation, lightness, 1.0)
 }
 
 pub fn from_rgb_hex(hex: Int) -> Result(Colour, Nil) {
@@ -196,13 +174,13 @@ pub fn from_rgb_hex(hex: Int) -> Result(Colour, Nil) {
 }
 
 pub fn from_rgb_hex_string(hex_string: String) -> Result(Colour, Nil) {
-  try hex_int = hex_string_to_int(hex_string)
+  use hex_int <- result.then(hex_string_to_int(hex_string))
 
   from_rgb_hex(hex_int)
 }
 
 pub fn from_rgba_hex_string(hex_string: String) -> Result(Colour, Nil) {
-  try hex_int = hex_string_to_int(hex_string)
+  use hex_int <- result.then(hex_string_to_int(hex_string))
 
   from_rgba_hex(hex_int)
 }
@@ -234,7 +212,7 @@ pub fn from_rgba_hex(hex: Int) -> Result(Colour, Nil) {
         bitwise.and(hex, 0xff)
         |> int.to_float()
         |> float.divide(255.0)
-      rgba(r, g, b, a)
+      from_rgba(r, g, b, a)
     }
   }
 }
@@ -283,13 +261,13 @@ pub fn to_css_string(colour: Colour) -> String {
 
 // CONVERSIONS ----------------------------------------------------------------
 
-pub fn to_rgba(colour: Colour) -> Rgba {
+pub fn to_rgba(colour: Colour) -> #(Float, Float, Float, Float) {
   let Colour(r, g, b, a) = colour
 
-  Rgba(r, g, b, a)
+  #(r, g, b, a)
 }
 
-pub fn to_hsla(colour: Colour) -> Hsla {
+pub fn to_hsla(colour: Colour) -> #(Float, Float, Float, Float) {
   let Colour(r: r, g: g, b: b, a: a) = colour
   let min_colour = float.min(r, float.min(g, b))
 
@@ -325,7 +303,7 @@ pub fn to_hsla(colour: Colour) -> Hsla {
     _ -> { max_colour -. min_colour } /. { 2.0 -. max_colour -. min_colour }
   }
 
-  Hsla(h: h3, s: s, l: l, a: a)
+  #(h3, s, l, a)
 }
 
 // COLOURS --------------------------------------------------------------------
