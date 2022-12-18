@@ -10,7 +10,8 @@ import gleam/list
 // TYPES ----------------------------------------------------------------------
 
 pub opaque type Colour {
-  Colour(r: Float, g: Float, b: Float, a: Float)
+  Rgba(r: Float, g: Float, b: Float, a: Float)
+  Hsla(h: Float, s: Float, l: Float, a: Float)
 }
 
 pub type Color =
@@ -61,16 +62,18 @@ fn hex_string_to_int(hex_string: String) -> Result(Int, Nil) {
       case total {
         Error(Nil) -> Error(Nil)
         Ok(v) -> {
-          try num = case char {
-            "f" -> Ok(15)
-            "e" -> Ok(14)
-            "d" -> Ok(13)
-            "c" -> Ok(12)
-            "b" -> Ok(11)
-            "a" -> Ok(10)
-            _ -> int.parse(char)
-          }
-          try base = int.power(16, int.to_float(index))
+          use
+            num
+          <- result.then(case char {
+              "f" -> Ok(15)
+              "e" -> Ok(14)
+              "d" -> Ok(13)
+              "c" -> Ok(12)
+              "b" -> Ok(11)
+              "a" -> Ok(10)
+              _ -> int.parse(char)
+            })
+          use base <- result.then(int.power(16, int.to_float(index)))
           Ok(v + float.round(int.to_float(num) *. base))
         }
       }
@@ -78,28 +81,100 @@ fn hex_string_to_int(hex_string: String) -> Result(Int, Nil) {
   )
 }
 
+fn hsla_to_rgba(
+  h: Float,
+  s: Float,
+  l: Float,
+  a: Float,
+) -> #(Float, Float, Float, Float) {
+  let m2 = case l <=. 0.5 {
+    True -> l *. { s +. 1.0 }
+    False -> l +. s -. l *. s
+  }
+
+  let m1 = l *. 2.0 -. m2
+
+  let r = hue_to_rgb(h +. 1.0 /. 3.0, m1, m2)
+  let g = hue_to_rgb(h, m1, m2)
+  let b = hue_to_rgb(h -. 1.0 /. 3.0, m1, m2)
+
+  #(r, g, b, a)
+}
+
+fn rgba_to_hsla(
+  r: Float,
+  g: Float,
+  b: Float,
+  a: Float,
+) -> #(Float, Float, Float, Float) {
+  let min_colour = float.min(r, float.min(g, b))
+
+  let max_colour = float.max(r, float.max(g, b))
+
+  let h1 = case True {
+    _ if max_colour == r -> float.divide(g -. b, max_colour -. min_colour)
+    _ if max_colour == g ->
+      float.divide(b -. r, max_colour -. min_colour)
+      |> result.then(fn(d) { Ok(2.0 +. d) })
+    _ ->
+      float.divide(r -. g, max_colour -. min_colour)
+      |> result.then(fn(d) { Ok(4.0 +. d) })
+  }
+
+  let h2 = case h1 {
+    Ok(v) -> Ok(v *. { 1.0 /. 6.0 })
+    _ -> h1
+  }
+
+  let h3 = case h2 {
+    Ok(v) if v <. 0.0 -> v +. 1.0
+    Ok(v) -> v
+    _ -> 0.0
+  }
+
+  let l = { min_colour +. max_colour } /. 2.0
+
+  let s = case True {
+    _ if min_colour == max_colour -> 0.0
+    _ if l <. 0.5 ->
+      { max_colour -. min_colour } /. { max_colour +. min_colour }
+    _ -> { max_colour -. min_colour } /. { 2.0 -. max_colour -. min_colour }
+  }
+
+  #(h3, s, l, a)
+}
+
 // CONSTRUCTORS ---------------------------------------------------------------
 
 pub fn rgb255(r red: Int, g green: Int, b blue: Int) -> Result(Colour, Nil) {
-  try r =
-    red
-    |> int.to_float()
-    |> float.divide(255.0)
-    |> result.then(valid_colour_value)
+  use
+    r
+  <- result.then(
+      red
+      |> int.to_float()
+      |> float.divide(255.0)
+      |> result.then(valid_colour_value),
+    )
 
-  try g =
-    green
-    |> int.to_float()
-    |> float.divide(255.0)
-    |> result.then(valid_colour_value)
+  use
+    g
+  <- result.then(
+      green
+      |> int.to_float()
+      |> float.divide(255.0)
+      |> result.then(valid_colour_value),
+    )
 
-  try b =
-    blue
-    |> int.to_float()
-    |> float.divide(255.0)
-    |> result.then(valid_colour_value)
+  use
+    b
+  <- result.then(
+      blue
+      |> int.to_float()
+      |> float.divide(255.0)
+      |> result.then(valid_colour_value),
+    )
 
-  Ok(Colour(r: r, g: g, b: b, a: 1.0))
+  Ok(Rgba(r: r, g: g, b: b, a: 1.0))
 }
 
 pub fn rgb(r red: Float, g green: Float, b blue: Float) -> Result(Colour, Nil) {
@@ -107,7 +182,7 @@ pub fn rgb(r red: Float, g green: Float, b blue: Float) -> Result(Colour, Nil) {
   use g <- result.then(valid_colour_value(green))
   use b <- result.then(valid_colour_value(blue))
 
-  Ok(Colour(r: r, g: g, b: b, a: 1.0))
+  Ok(Rgba(r: r, g: g, b: b, a: 1.0))
 }
 
 pub fn from_rgba(
@@ -121,7 +196,7 @@ pub fn from_rgba(
   use b <- result.then(valid_colour_value(blue))
   use a <- result.then(valid_colour_value(alpha))
 
-  Ok(Colour(r: r, g: g, b: b, a: a))
+  Ok(Rgba(r: r, g: g, b: b, a: a))
 }
 
 pub fn from_hsla(
@@ -135,18 +210,7 @@ pub fn from_hsla(
   use l <- result.then(valid_colour_value(lightness))
   use a <- result.then(valid_colour_value(alpha))
 
-  let m2 = case l <=. 0.5 {
-    True -> l *. { s +. 1.0 }
-    False -> l +. s -. l *. s
-  }
-
-  let m1 = l *. 2.0 -. m2
-
-  let r = hue_to_rgb(h +. 1.0 /. 3.0, m1, m2)
-  let g = hue_to_rgb(h, m1, m2)
-  let b = hue_to_rgb(h -. 1.0 /. 3.0, m1, m2)
-
-  Ok(Colour(r: r, g: g, b: b, a: a))
+  Ok(Hsla(h: h, s: s, l: l, a: a))
 }
 
 pub fn hsl(
@@ -219,8 +283,8 @@ pub fn from_rgba_hex(hex: Int) -> Result(Colour, Nil) {
 
 // ---------------------------------------------------------------
 
-pub fn to_css_string(colour: Colour) -> String {
-  let Colour(r, g, b, a) = colour
+pub fn to_css_rgba_string(colour: Colour) -> String {
+  let #(r, g, b, a) = to_rgba(colour)
 
   let percent = fn(x: Float) -> Float {
     // This won't fail because we are always dividing by 100.0
@@ -262,54 +326,23 @@ pub fn to_css_string(colour: Colour) -> String {
 // CONVERSIONS ----------------------------------------------------------------
 
 pub fn to_rgba(colour: Colour) -> #(Float, Float, Float, Float) {
-  let Colour(r, g, b, a) = colour
-
-  #(r, g, b, a)
+  case colour {
+    Rgba(r, g, b, a) -> #(r, g, b, a)
+    Hsla(h, s, l, a) -> hsla_to_rgba(h, s, l, a)
+  }
 }
 
 pub fn to_hsla(colour: Colour) -> #(Float, Float, Float, Float) {
-  let Colour(r: r, g: g, b: b, a: a) = colour
-  let min_colour = float.min(r, float.min(g, b))
-
-  let max_colour = float.max(r, float.max(g, b))
-
-  let h1 = case True {
-    _ if max_colour == r -> float.divide(g -. b, max_colour -. min_colour)
-    _ if max_colour == g ->
-      float.divide(b -. r, max_colour -. min_colour)
-      |> result.then(fn(d) { Ok(2.0 +. d) })
-    _ ->
-      float.divide(r -. g, max_colour -. min_colour)
-      |> result.then(fn(d) { Ok(4.0 +. d) })
+  case colour {
+    Hsla(h, s, l, a) -> #(h, s, l, a)
+    Rgba(r, g, b, a) -> rgba_to_hsla(r, g, b, a)
   }
-
-  let h2 = case h1 {
-    Ok(v) -> Ok(v *. { 1.0 /. 6.0 })
-    _ -> h1
-  }
-
-  let h3 = case h2 {
-    Ok(v) if v <. 0.0 -> v +. 1.0
-    Ok(v) -> v
-    _ -> 0.0
-  }
-
-  let l = { min_colour +. max_colour } /. 2.0
-
-  let s = case True {
-    _ if min_colour == max_colour -> 0.0
-    _ if l <. 0.5 ->
-      { max_colour -. min_colour } /. { max_colour +. min_colour }
-    _ -> { max_colour -. min_colour } /. { 2.0 -. max_colour -. min_colour }
-  }
-
-  #(h3, s, l, a)
 }
 
 // COLOURS --------------------------------------------------------------------
 
 /// (239, 41, 41, 1.0)
-pub const light_red = Colour(
+pub const light_red = Rgba(
   r: 0.9372549019607843,
   g: 0.1607843137254902,
   b: 0.1607843137254902,
@@ -317,13 +350,13 @@ pub const light_red = Colour(
 )
 
 /// (204, 0, 0, 1.0)
-pub const red = Colour(r: 0.8, g: 0.0, b: 0.0, a: 1.0)
+pub const red = Rgba(r: 0.8, g: 0.0, b: 0.0, a: 1.0)
 
 /// (164, 0, 0, 1.0)
-pub const dark_red = Colour(r: 0.6431372549019608, g: 0.0, b: 0.0, a: 1.0)
+pub const dark_red = Rgba(r: 0.6431372549019608, g: 0.0, b: 0.0, a: 1.0)
 
 /// (252, 175, 62, 1.0)
-pub const light_orange = Colour(
+pub const light_orange = Rgba(
   r: 0.9882352941176471,
   g: 0.6862745098039216,
   b: 0.24313725490196078,
@@ -331,7 +364,7 @@ pub const light_orange = Colour(
 )
 
 /// (245, 121, 0, 1.0)
-pub const orange = Colour(
+pub const orange = Rgba(
   r: 0.9607843137254902,
   g: 0.4745098039215686,
   b: 0.0,
@@ -339,7 +372,7 @@ pub const orange = Colour(
 )
 
 /// (206, 92, 0, 1.0)
-pub const dark_orange = Colour(
+pub const dark_orange = Rgba(
   r: 0.807843137254902,
   g: 0.3607843137254902,
   b: 0.0,
@@ -347,7 +380,7 @@ pub const dark_orange = Colour(
 )
 
 /// (255, 233, 79, 1.0)
-pub const light_yellow = Colour(
+pub const light_yellow = Rgba(
   r: 1.0,
   g: 0.9137254901960784,
   b: 0.30980392156862746,
@@ -355,7 +388,7 @@ pub const light_yellow = Colour(
 )
 
 /// (237, 212, 0, 1.0)
-pub const yellow = Colour(
+pub const yellow = Rgba(
   r: 0.9294117647058824,
   g: 0.8313725490196079,
   b: 0.0,
@@ -363,7 +396,7 @@ pub const yellow = Colour(
 )
 
 /// (196, 160, 0, 1.0)
-pub const dark_yellow = Colour(
+pub const dark_yellow = Rgba(
   r: 0.7686274509803922,
   g: 0.6274509803921569,
   b: 0.0,
@@ -371,7 +404,7 @@ pub const dark_yellow = Colour(
 )
 
 /// (138, 226, 52, 1.0)
-pub const light_green = Colour(
+pub const light_green = Rgba(
   r: 0.5411764705882353,
   g: 0.8862745098039215,
   b: 0.20392156862745098,
@@ -379,7 +412,7 @@ pub const light_green = Colour(
 )
 
 /// (115, 210, 22, 1.0)
-pub const green = Colour(
+pub const green = Rgba(
   r: 0.45098039215686275,
   g: 0.8235294117647058,
   b: 0.08627450980392157,
@@ -387,7 +420,7 @@ pub const green = Colour(
 )
 
 /// (78, 154, 6, 1.0)
-pub const dark_green = Colour(
+pub const dark_green = Rgba(
   r: 0.3058823529411765,
   g: 0.6039215686274509,
   b: 0.023529411764705882,
@@ -395,7 +428,7 @@ pub const dark_green = Colour(
 )
 
 /// (114, 159, 207, 1.0)
-pub const light_blue = Colour(
+pub const light_blue = Rgba(
   r: 0.4470588235294118,
   g: 0.6235294117647059,
   b: 0.8117647058823529,
@@ -403,7 +436,7 @@ pub const light_blue = Colour(
 )
 
 /// (52, 101, 164, 1.0)
-pub const blue = Colour(
+pub const blue = Rgba(
   r: 0.20392156862745098,
   g: 0.396078431372549,
   b: 0.6431372549019608,
@@ -411,7 +444,7 @@ pub const blue = Colour(
 )
 
 /// (32, 74, 135, 1.0)
-pub const dark_blue = Colour(
+pub const dark_blue = Rgba(
   r: 0.12549019607843137,
   g: 0.2901960784313726,
   b: 0.5294117647058824,
@@ -419,7 +452,7 @@ pub const dark_blue = Colour(
 )
 
 /// (173, 127, 168, 1.0)
-pub const light_purple = Colour(
+pub const light_purple = Rgba(
   r: 0.6784313725490196,
   g: 0.4980392156862745,
   b: 0.6588235294117647,
@@ -427,7 +460,7 @@ pub const light_purple = Colour(
 )
 
 /// (117, 80, 123, 1.0)
-pub const purple = Colour(
+pub const purple = Rgba(
   r: 0.4588235294117647,
   g: 0.3137254901960784,
   b: 0.4823529411764706,
@@ -435,7 +468,7 @@ pub const purple = Colour(
 )
 
 /// (92, 53, 102, 1.0)
-pub const dark_purple = Colour(
+pub const dark_purple = Rgba(
   r: 0.3607843137254902,
   g: 0.20784313725490197,
   b: 0.4,
@@ -443,7 +476,7 @@ pub const dark_purple = Colour(
 )
 
 /// (233, 185, 110, 1.0)
-pub const light_brown = Colour(
+pub const light_brown = Rgba(
   r: 0.9137254901960784,
   g: 0.7254901960784313,
   b: 0.43137254901960786,
@@ -451,7 +484,7 @@ pub const light_brown = Colour(
 )
 
 /// (193, 125, 17, 1.0)
-pub const brown = Colour(
+pub const brown = Rgba(
   r: 0.7568627450980392,
   g: 0.49019607843137253,
   b: 0.06666666666666667,
@@ -459,7 +492,7 @@ pub const brown = Colour(
 )
 
 /// (143, 89, 2, 1.0)
-pub const dark_brown = Colour(
+pub const dark_brown = Rgba(
   r: 0.5607843137254902,
   g: 0.34901960784313724,
   b: 0.00784313725490196,
@@ -467,13 +500,13 @@ pub const dark_brown = Colour(
 )
 
 /// (0, 0, 0, 1.0)
-pub const black = Colour(r: 0.0, g: 0.0, b: 0.0, a: 1.0)
+pub const black = Rgba(r: 0.0, g: 0.0, b: 0.0, a: 1.0)
 
 /// (255, 255, 255, 1.0)
-pub const white = Colour(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
+pub const white = Rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
 
 /// (238, 238, 236, 1.0)
-pub const light_grey = Colour(
+pub const light_grey = Rgba(
   r: 0.9333333333333333,
   g: 0.9333333333333333,
   b: 0.9254901960784314,
@@ -481,7 +514,7 @@ pub const light_grey = Colour(
 )
 
 /// (211, 215, 207, 1.0)
-pub const grey = Colour(
+pub const grey = Rgba(
   r: 0.8274509803921568,
   g: 0.8431372549019608,
   b: 0.8117647058823529,
@@ -489,7 +522,7 @@ pub const grey = Colour(
 )
 
 /// (186, 189, 182, 1.0)
-pub const dark_grey = Colour(
+pub const dark_grey = Rgba(
   r: 0.7294117647058823,
   g: 0.7411764705882353,
   b: 0.7137254901960784,
@@ -497,7 +530,7 @@ pub const dark_grey = Colour(
 )
 
 /// (238, 238, 236, 1.0)
-pub const light_gray = Colour(
+pub const light_gray = Rgba(
   r: 0.9333333333333333,
   g: 0.9333333333333333,
   b: 0.9254901960784314,
@@ -505,7 +538,7 @@ pub const light_gray = Colour(
 )
 
 /// (211, 215, 207, 1.0)
-pub const gray = Colour(
+pub const gray = Rgba(
   r: 0.8274509803921568,
   g: 0.8431372549019608,
   b: 0.8117647058823529,
@@ -513,7 +546,7 @@ pub const gray = Colour(
 )
 
 /// (186, 189, 182, 1.0)
-pub const dark_gray = Colour(
+pub const dark_gray = Rgba(
   r: 0.7294117647058823,
   g: 0.7411764705882353,
   b: 0.7137254901960784,
@@ -521,7 +554,7 @@ pub const dark_gray = Colour(
 )
 
 /// (136, 138, 133, 1.0)
-pub const light_charcoal = Colour(
+pub const light_charcoal = Rgba(
   r: 0.5333333333333333,
   g: 0.5411764705882353,
   b: 0.5215686274509804,
@@ -529,7 +562,7 @@ pub const light_charcoal = Colour(
 )
 
 /// (85, 87, 83, 1.0)
-pub const charcoal = Colour(
+pub const charcoal = Rgba(
   r: 0.3333333333333333,
   g: 0.3411764705882353,
   b: 0.3254901960784314,
@@ -537,7 +570,7 @@ pub const charcoal = Colour(
 )
 
 /// (46, 52, 54, 1.0)
-pub const dark_charcoal = Colour(
+pub const dark_charcoal = Rgba(
   r: 0.1803921568627451,
   g: 0.20392156862745098,
   b: 0.21176470588235294,
@@ -545,7 +578,7 @@ pub const dark_charcoal = Colour(
 )
 
 /// (255, 175, 243, 1.0)
-pub const pink = Colour(
+pub const pink = Rgba(
   r: 1.0,
   g: 0.6862745098039216,
   b: 0.9529411764705882,
