@@ -213,7 +213,7 @@ pub fn from_hsla(
   Ok(Hsla(h: h, s: s, l: l, a: a))
 }
 
-pub fn hsl(
+pub fn from_hsl(
   h hue: Float,
   s saturation: Float,
   l lightness: Float,

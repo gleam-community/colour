@@ -96,21 +96,21 @@ pub fn too_large_from_rgb_hex_string_test() {
   |> should.equal(Error(Nil))
 }
 
-pub fn hsl_test() {
-  assert Ok(c) = colour.hsl(0.25, 0.25, 0.5)
+pub fn from_hsl_test() {
+  assert Ok(c) = colour.from_hsl(0.25, 0.25, 0.5)
 
   c
   |> colour.to_rgba()
   |> should.equal(#(0.5, 0.625, 0.375, 1.0))
 }
 
-pub fn negative_hsl_test() {
-  colour.hsl(-0.25, 0.25, 0.5)
+pub fn negative_from_hsl_test() {
+  colour.from_hsl(-0.25, 0.25, 0.5)
   |> should.equal(Error(Nil))
 }
 
-pub fn too_large_hsl_test() {
-  colour.hsl(25.0, 0.25, 0.5)
+pub fn too_large_from_hsl_test() {
+  colour.from_hsl(25.0, 0.25, 0.5)
   |> should.equal(Error(Nil))
 }
 
