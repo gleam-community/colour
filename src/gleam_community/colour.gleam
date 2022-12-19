@@ -290,7 +290,7 @@ pub fn to_css_rgba_string(colour: Colour) -> String {
     // This won't fail because we are always dividing by 100.0
     assert Ok(p) =
       x
-      |> float.multiply(10000.0)
+      |> float.multiply(10_000.0)
       |> float.round()
       |> int.to_float()
       |> float.divide(100.0)
