@@ -1,8 +1,10 @@
 import gleeunit
 import gleeunit/should
 import gleam_community/colour
+import accessibility_test
 
 pub fn main() {
+  accessibility_test.main()
   gleeunit.main()
 }
 
