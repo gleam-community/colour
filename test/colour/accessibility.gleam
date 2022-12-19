@@ -1,11 +1,6 @@
-import gleeunit
 import gleeunit/should
 import gleam_community/colour
-import gleam_community/accessibility
-
-pub fn main() {
-  gleeunit.main()
-}
+import gleam_community/colour/accessibility
 
 pub fn contrast_ratio_test() {
   accessibility.contrast_ratio(colour.white, colour.black)
