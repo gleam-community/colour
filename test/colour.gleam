@@ -1,39 +1,39 @@
 import gleeunit/should
 import gleam_community/colour
 
-pub fn rgb255_test() {
-  colour.rgb255(204, 0, 0)
+pub fn from_rgb255_test() {
+  colour.from_rgb255(204, 0, 0)
   |> should.equal(Ok(colour.red))
 
-  colour.rgb255(114, 159, 207)
+  colour.from_rgb255(114, 159, 207)
   |> should.equal(Ok(colour.light_blue))
 
-  colour.rgb255(255, 175, 243)
+  colour.from_rgb255(255, 175, 243)
   |> should.equal(Ok(colour.pink))
 }
 
-pub fn negative_rgb255_test() {
-  colour.rgb255(-1, 0, 0)
+pub fn negative_from_rgb255_test() {
+  colour.from_rgb255(-1, 0, 0)
   |> should.equal(Error(Nil))
 }
 
-pub fn too_large_from_rgb255_test() {
-  colour.rgb255(256, 0, 0)
+pub fn too_large_from_from_rgb255_test() {
+  colour.from_rgb255(256, 0, 0)
   |> should.equal(Error(Nil))
 }
 
-pub fn rgb_test() {
-  colour.rgb(1.0, 0.6862745098039216, 0.9529411764705882)
+pub fn from_rgb_test() {
+  colour.from_rgb(1.0, 0.6862745098039216, 0.9529411764705882)
   |> should.equal(Ok(colour.pink))
 }
 
 pub fn negative_from_rgb_test() {
-  colour.rgb(-1.0, 0.0, 0.0)
+  colour.from_rgb(-1.0, 0.0, 0.0)
   |> should.equal(Error(Nil))
 }
 
-pub fn too_large_rgb_test() {
-  colour.rgb(256.0, 0.0, 0.0)
+pub fn too_large_from_rgb_test() {
+  colour.from_rgb(256.0, 0.0, 0.0)
   |> should.equal(Error(Nil))
 }
 

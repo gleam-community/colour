@@ -1,3 +1,104 @@
+//// 
+//// - **Types**
+////   - [`Colour`](#Colour)
+////   - [`Color`](#Color)
+//// - **Constructors**
+////   - [`from_rgb255`](#from_rgb255)
+////   - [`from_rgb`](#from_rgb)
+////   - [`from_rgba`](#from_rgba)
+////   - [`from_hsl`](#from_hsl)
+////   - [`from_hsla`](#from_hsla)
+////   - [`from_rgb_hex`](#from_rgb_hex)
+////   - [`from_rgba_hex`](#from_rgba_hex)
+////   - [`from_rgb_hex_string`](#from_rgb_hex_string)
+////   - [`from_rgba_hex_string`](#from_rgba_hex_string)
+//// - **Conversions**
+////   - [`to_rgba`](#to_rgba)
+////   - [`to_hsla`](#hsla)
+////   - [`to_css_rgba_string`](#to_css_rgba_string)
+//// - **Colours**
+////   - [`light_red`](#light_red)
+////   - [`red`](#red)
+////   - [`dark_red`](#dark_red)
+////   - [`light_orange`](#light_orange)
+////   - [`orange`](#orange)
+////   - [`dark_orange`](#dark_orange)
+////   - [`light_yellow`](#light_yellow)
+////   - [`yellow`](#yellow)
+////   - [`dark_yellow`](#dark_yellow)
+////   - [`light_green`](#light_green)
+////   - [`green`](#green)
+////   - [`dark_green`](#dark_green)
+////   - [`light_blue`](#light_blue)
+////   - [`blue`](#blue)
+////   - [`dark_blue`](#dark_blue)
+////   - [`light_purple`](#light_purple)
+////   - [`purple`](#purple)
+////   - [`dark_purple`](#dark_purple)
+////   - [`light_brown`](#light_brown)
+////   - [`brown`](#brown)
+////   - [`dark_brown`](#dark_brown)
+////   - [`black`](#black)
+////   - [`white`](#white)
+////   - [`light_grey`](#light_grey)
+////   - [`grey`](#grey)
+////   - [`dark_grey`](#dark_grey)
+////   - [`light_gray`](#light_gray)
+////   - [`gray`](#gray)
+////   - [`dark_gray`](#dark_gray)
+////   - [`light_charcoal`](#light_charcoal)
+////   - [`charcoal`](#charcoal)
+////   - [`dark_charcoal`](#dark_charcoal)
+////   - [`pink`](#pink)
+//// 
+//// ---
+////
+//// This package was heavily inspired by the `elm-colour` module.
+//// The original source code can be found
+//// <a href="https://github.com/avh4/elm-color/">here</a>.
+////
+//// <details>
+//// <summary>The license of that package is produced below:</summary>
+//// 
+//// 
+//// > MIT License
+////
+//// > Copyright 2018 Aaron VonderHaar
+////
+//// > Redistribution and use in source and binary forms, with or without modification, 
+//// are permitted provided that the following conditions are met:
+////
+////   1. Redistributions of source code must retain the above copyright notice, 
+////    this list of conditions and the following disclaimer.
+////
+////   2. Redistributions in binary form must reproduce the above copyright notice, 
+////    this list of conditions and the following disclaimer in the documentation 
+////    and/or other materials provided with the distribution.
+////
+////   3. Neither the name of the copyright holder nor the names of its contributors 
+////    may be used to endorse or promote products derived from this software without 
+////    specific prior written permission.
+////
+//// > THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+//// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
+//// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
+//// THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+//// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS 
+//// OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY 
+//// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+//// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+////
+//// > The above copyright notice and this permission notice shall be included in all
+//// copies or substantial portions of the Software.
+//// </details>
+////
+
+// Just in case we decide in the future to no longer include the above reference
+// and license, this package was initially a port of the `elm-color` module:
+//
+// https://github.com/avh4/elm-color/
+//
+
 // IMPORTS --------------------------------------------------------------------
 
 import gleam/bitwise
@@ -9,11 +110,35 @@ import gleam/list
 
 // TYPES ----------------------------------------------------------------------
 
+/// A representation of a colour that can be converted to RGBA or HSLA format.
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+/// </br>
+///
 pub opaque type Colour {
   Rgba(r: Float, g: Float, b: Float, a: Float)
   Hsla(h: Float, s: Float, l: Float, a: Float)
 }
 
+/// Type alias for `Colour`
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+/// </br>
+///
 pub type Color =
   Colour
 
@@ -146,7 +271,30 @@ fn rgba_to_hsla(
 
 // CONSTRUCTORS ---------------------------------------------------------------
 
-pub fn rgb255(r red: Int, g green: Int, b blue: Int) -> Result(Colour, Nil) {
+/// Returns a `Result(Colour)` created from the given 8 bit RGB values.
+///
+/// Returns `Error(Nil)` if the supplied RGB values are greater than 255 or less than 0.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_rgb255(255, 0, 0)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
+pub fn from_rgb255(r red: Int, g green: Int, b blue: Int) -> Result(Colour, Nil) {
   use
     r
   <- result.then(
@@ -177,7 +325,34 @@ pub fn rgb255(r red: Int, g green: Int, b blue: Int) -> Result(Colour, Nil) {
   Ok(Rgba(r: r, g: g, b: b, a: 1.0))
 }
 
-pub fn rgb(r red: Float, g green: Float, b blue: Float) -> Result(Colour, Nil) {
+/// Returns `Result(Colour)` created from the given RGB values.
+///
+/// If the supplied RGB values are greater than 1.0 or less than 0.0 returns `Error(Nil)`
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_rgb(1.0, 0.0, 0.0)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
+pub fn from_rgb(
+  r red: Float,
+  g green: Float,
+  b blue: Float,
+) -> Result(Colour, Nil) {
   use r <- result.then(valid_colour_value(red))
   use g <- result.then(valid_colour_value(green))
   use b <- result.then(valid_colour_value(blue))
@@ -185,6 +360,29 @@ pub fn rgb(r red: Float, g green: Float, b blue: Float) -> Result(Colour, Nil) {
   Ok(Rgba(r: r, g: g, b: b, a: 1.0))
 }
 
+/// Returns `Result(Colour)` created from the given RGBA values.
+///
+/// Returns `Error(Nil)` if the supplied RGBA values are greater than 1.0 or less than 0.0.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red_half_opacity) = from_rbga(1.0, 0.0, 0.0, 0.5)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
 pub fn from_rgba(
   r red: Float,
   g green: Float,
@@ -199,6 +397,29 @@ pub fn from_rgba(
   Ok(Rgba(r: r, g: g, b: b, a: a))
 }
 
+/// Returns `Result(Colour)` created from the given HSLA values.
+///
+/// Returns `Error(Nil)`f the supplied HSLA values are greater than 1.0 or less than 0.0.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red_half_opacity) = from_hsla(0.0, 1.0, 0.5, 0.5)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
 pub fn from_hsla(
   h hue: Float,
   s saturation: Float,
@@ -213,6 +434,29 @@ pub fn from_hsla(
   Ok(Hsla(h: h, s: s, l: l, a: a))
 }
 
+/// Returns `Result(Colour)` created from the given HSL values.
+///
+/// Returns `Error(Nil)` if the supplied HSL values are greater than 1.0 or less than 0.0.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_hsla(0.0, 1.0, 0.5)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
 pub fn from_hsl(
   h hue: Float,
   s saturation: Float,
@@ -221,6 +465,29 @@ pub fn from_hsl(
   from_hsla(hue, saturation, lightness, 1.0)
 }
 
+/// Returns a `Result(Colour)` created from the given hex `Int`.
+///
+/// Returns `Error(Nil)` if the supplied hex `Int is greater than 0xffffff or less than 0x0.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_rgb_hex(0xff0000)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
 pub fn from_rgb_hex(hex: Int) -> Result(Colour, Nil) {
   case hex > 0xffffff || hex < 0 {
     True -> Error(Nil)
@@ -232,23 +499,92 @@ pub fn from_rgb_hex(hex: Int) -> Result(Colour, Nil) {
         bitwise.shift_right(hex, 8)
         |> bitwise.and(0xff)
       let b = bitwise.and(hex, 0xff)
-      rgb255(r, g, b)
+      from_rgb255(r, g, b)
     }
   }
 }
 
+/// Returns a `Result(Colour)` created from the given RGB hex `String`.
+///
+/// Returns `Error(Nil)` if the supplied hex `String` is invalid, or greater than `"#ffffff" or less than `"#0"`
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_rgb_hex_string("#ff0000")
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
 pub fn from_rgb_hex_string(hex_string: String) -> Result(Colour, Nil) {
   use hex_int <- result.then(hex_string_to_int(hex_string))
 
   from_rgb_hex(hex_int)
 }
 
+/// Returns a `Result(Colour)` created from the given RGBA hex `String`.
+///
+/// Returns `Error(Nil)` if the supplied hex `String` is invalid, or greater than `"#ffffffff" or less than `"#0"`
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red_half_opacity) = from_rgba_hex_string("#ff00007f")
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
 pub fn from_rgba_hex_string(hex_string: String) -> Result(Colour, Nil) {
   use hex_int <- result.then(hex_string_to_int(hex_string))
 
   from_rgba_hex(hex_int)
 }
 
+/// Returns a `Result(Colour)` created from the given hex `Int`.
+///
+/// Returns `Error(Nil)` if the supplied hex `Int is greater than 0xffffffff or less than 0x0.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red_half_opacity) = from_rgba_hex(0xff00007f)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
 pub fn from_rgba_hex(hex: Int) -> Result(Colour, Nil) {
   case hex > 0xffffffff || hex < 0 {
     True -> Error(Nil)
@@ -281,8 +617,90 @@ pub fn from_rgba_hex(hex: Int) -> Result(Colour, Nil) {
   }
 }
 
-// ---------------------------------------------------------------
+// CONVERSIONS ----------------------------------------------------------------
 
+/// Returns `#(Float, Float, Float, Float)` representing the given `Colour`'s
+/// R, G, B, and A values respectively.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_rgb255(255, 0, 0)
+///   let #(r, g, b, a) = to_rgba(red)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
+pub fn to_rgba(colour: Colour) -> #(Float, Float, Float, Float) {
+  case colour {
+    Rgba(r, g, b, a) -> #(r, g, b, a)
+    Hsla(h, s, l, a) -> hsla_to_rgba(h, s, l, a)
+  }
+}
+
+/// Returns `#(Float, Float, Float, Float)` representing the given `Colour`'s
+/// H, S, L, and A values respectively.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_rgb255(255, 0, 0)
+///   let #(h, s, l, a) = to_hsla(red)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
+pub fn to_hsla(colour: Colour) -> #(Float, Float, Float, Float) {
+  case colour {
+    Hsla(h, s, l, a) -> #(h, s, l, a)
+    Rgba(r, g, b, a) -> rgba_to_hsla(r, g, b, a)
+  }
+}
+
+/// Returns an rgba formatted CSS `String` created from the given `Colour`.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_rgb255(255, 0, 0)
+///   let css_red = to_css_rgba_string(red)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
 pub fn to_css_rgba_string(colour: Colour) -> String {
   let #(r, g, b, a) = to_rgba(colour)
 
@@ -323,25 +741,9 @@ pub fn to_css_rgba_string(colour: Colour) -> String {
   )
 }
 
-// CONVERSIONS ----------------------------------------------------------------
-
-pub fn to_rgba(colour: Colour) -> #(Float, Float, Float, Float) {
-  case colour {
-    Rgba(r, g, b, a) -> #(r, g, b, a)
-    Hsla(h, s, l, a) -> hsla_to_rgba(h, s, l, a)
-  }
-}
-
-pub fn to_hsla(colour: Colour) -> #(Float, Float, Float, Float) {
-  case colour {
-    Hsla(h, s, l, a) -> #(h, s, l, a)
-    Rgba(r, g, b, a) -> rgba_to_hsla(r, g, b, a)
-  }
-}
-
 // COLOURS --------------------------------------------------------------------
 
-/// (239, 41, 41, 1.0)
+/// A `Colour` reprsenting the colour RGBA(239, 41, 41, 1.0)
 pub const light_red = Rgba(
   r: 0.9372549019607843,
   g: 0.1607843137254902,
@@ -349,13 +751,13 @@ pub const light_red = Rgba(
   a: 1.0,
 )
 
-/// (204, 0, 0, 1.0)
+/// A `Colour` reprsenting the colour RGBA(204, 0, 0, 1.0)
 pub const red = Rgba(r: 0.8, g: 0.0, b: 0.0, a: 1.0)
 
-/// (164, 0, 0, 1.0)
+/// A `Colour` reprsenting the colour RGBA(164, 0, 0, 1.0)
 pub const dark_red = Rgba(r: 0.6431372549019608, g: 0.0, b: 0.0, a: 1.0)
 
-/// (252, 175, 62, 1.0)
+/// A `Colour` reprsenting the colour RGBA(252, 175, 62, 1.0)
 pub const light_orange = Rgba(
   r: 0.9882352941176471,
   g: 0.6862745098039216,
@@ -363,7 +765,7 @@ pub const light_orange = Rgba(
   a: 1.0,
 )
 
-/// (245, 121, 0, 1.0)
+/// A `Colour` reprsenting the colour RGBA(245, 121, 0, 1.0)
 pub const orange = Rgba(
   r: 0.9607843137254902,
   g: 0.4745098039215686,
@@ -371,7 +773,7 @@ pub const orange = Rgba(
   a: 1.0,
 )
 
-/// (206, 92, 0, 1.0)
+/// A `Colour` reprsenting the colour RGBA(206, 92, 0, 1.0)
 pub const dark_orange = Rgba(
   r: 0.807843137254902,
   g: 0.3607843137254902,
@@ -379,7 +781,7 @@ pub const dark_orange = Rgba(
   a: 1.0,
 )
 
-/// (255, 233, 79, 1.0)
+/// A `Colour` reprsenting the colour RGBA(255, 233, 79, 1.0)
 pub const light_yellow = Rgba(
   r: 1.0,
   g: 0.9137254901960784,
@@ -387,7 +789,7 @@ pub const light_yellow = Rgba(
   a: 1.0,
 )
 
-/// (237, 212, 0, 1.0)
+/// A `Colour` reprsenting the colour RGBA(237, 212, 0, 1.0)
 pub const yellow = Rgba(
   r: 0.9294117647058824,
   g: 0.8313725490196079,
@@ -395,7 +797,7 @@ pub const yellow = Rgba(
   a: 1.0,
 )
 
-/// (196, 160, 0, 1.0)
+/// A `Colour` reprsenting the colour RGBA(196, 160, 0, 1.0)
 pub const dark_yellow = Rgba(
   r: 0.7686274509803922,
   g: 0.6274509803921569,
@@ -403,7 +805,7 @@ pub const dark_yellow = Rgba(
   a: 1.0,
 )
 
-/// (138, 226, 52, 1.0)
+/// A `Colour` reprsenting the colour RGBA(138, 226, 52, 1.0)
 pub const light_green = Rgba(
   r: 0.5411764705882353,
   g: 0.8862745098039215,
@@ -411,7 +813,7 @@ pub const light_green = Rgba(
   a: 1.0,
 )
 
-/// (115, 210, 22, 1.0)
+/// A `Colour` reprsenting the colour RGBA(115, 210, 22, 1.0)
 pub const green = Rgba(
   r: 0.45098039215686275,
   g: 0.8235294117647058,
@@ -419,7 +821,7 @@ pub const green = Rgba(
   a: 1.0,
 )
 
-/// (78, 154, 6, 1.0)
+/// A `Colour` reprsenting the colour RGBA(78, 154, 6, 1.0)
 pub const dark_green = Rgba(
   r: 0.3058823529411765,
   g: 0.6039215686274509,
@@ -427,7 +829,7 @@ pub const dark_green = Rgba(
   a: 1.0,
 )
 
-/// (114, 159, 207, 1.0)
+/// A `Colour` reprsenting the colour RGBA(114, 159, 207, 1.0)
 pub const light_blue = Rgba(
   r: 0.4470588235294118,
   g: 0.6235294117647059,
@@ -435,7 +837,7 @@ pub const light_blue = Rgba(
   a: 1.0,
 )
 
-/// (52, 101, 164, 1.0)
+/// A `Colour` reprsenting the colour RGBA(52, 101, 164, 1.0)
 pub const blue = Rgba(
   r: 0.20392156862745098,
   g: 0.396078431372549,
@@ -443,7 +845,7 @@ pub const blue = Rgba(
   a: 1.0,
 )
 
-/// (32, 74, 135, 1.0)
+/// A `Colour` reprsenting the colour RGBA(32, 74, 135, 1.0)
 pub const dark_blue = Rgba(
   r: 0.12549019607843137,
   g: 0.2901960784313726,
@@ -451,7 +853,7 @@ pub const dark_blue = Rgba(
   a: 1.0,
 )
 
-/// (173, 127, 168, 1.0)
+/// A `Colour` reprsenting the colour RGBA(173, 127, 168, 1.0)
 pub const light_purple = Rgba(
   r: 0.6784313725490196,
   g: 0.4980392156862745,
@@ -459,7 +861,7 @@ pub const light_purple = Rgba(
   a: 1.0,
 )
 
-/// (117, 80, 123, 1.0)
+/// A `Colour` reprsenting the colour RGBA(117, 80, 123, 1.0)
 pub const purple = Rgba(
   r: 0.4588235294117647,
   g: 0.3137254901960784,
@@ -467,7 +869,7 @@ pub const purple = Rgba(
   a: 1.0,
 )
 
-/// (92, 53, 102, 1.0)
+/// A `Colour` reprsenting the colour RGBA(92, 53, 102, 1.0)
 pub const dark_purple = Rgba(
   r: 0.3607843137254902,
   g: 0.20784313725490197,
@@ -475,7 +877,7 @@ pub const dark_purple = Rgba(
   a: 1.0,
 )
 
-/// (233, 185, 110, 1.0)
+/// A `Colour` reprsenting the colour RGBA(233, 185, 110, 1.0)
 pub const light_brown = Rgba(
   r: 0.9137254901960784,
   g: 0.7254901960784313,
@@ -483,7 +885,7 @@ pub const light_brown = Rgba(
   a: 1.0,
 )
 
-/// (193, 125, 17, 1.0)
+/// A `Colour` reprsenting the colour RGBA(193, 125, 17, 1.0)
 pub const brown = Rgba(
   r: 0.7568627450980392,
   g: 0.49019607843137253,
@@ -491,7 +893,7 @@ pub const brown = Rgba(
   a: 1.0,
 )
 
-/// (143, 89, 2, 1.0)
+/// A `Colour` reprsenting the colour RGBA(143, 89, 2, 1.0)
 pub const dark_brown = Rgba(
   r: 0.5607843137254902,
   g: 0.34901960784313724,
@@ -499,13 +901,13 @@ pub const dark_brown = Rgba(
   a: 1.0,
 )
 
-/// (0, 0, 0, 1.0)
+/// A `Colour` reprsenting the colour RGBA(0, 0, 0, 1.0)
 pub const black = Rgba(r: 0.0, g: 0.0, b: 0.0, a: 1.0)
 
-/// (255, 255, 255, 1.0)
+/// A `Colour` reprsenting the colour RGBA(255, 255, 255, 1.0)
 pub const white = Rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
 
-/// (238, 238, 236, 1.0)
+/// A `Colour` reprsenting the colour RGBA(238, 238, 236, 1.0)
 pub const light_grey = Rgba(
   r: 0.9333333333333333,
   g: 0.9333333333333333,
@@ -513,7 +915,7 @@ pub const light_grey = Rgba(
   a: 1.0,
 )
 
-/// (211, 215, 207, 1.0)
+/// A `Colour` reprsenting the colour RGBA(211, 215, 207, 1.0)
 pub const grey = Rgba(
   r: 0.8274509803921568,
   g: 0.8431372549019608,
@@ -521,7 +923,7 @@ pub const grey = Rgba(
   a: 1.0,
 )
 
-/// (186, 189, 182, 1.0)
+/// A `Colour` reprsenting the colour RGBA(186, 189, 182, 1.0)
 pub const dark_grey = Rgba(
   r: 0.7294117647058823,
   g: 0.7411764705882353,
@@ -529,7 +931,7 @@ pub const dark_grey = Rgba(
   a: 1.0,
 )
 
-/// (238, 238, 236, 1.0)
+/// A `Colour` reprsenting the colour RGBA(238, 238, 236, 1.0)
 pub const light_gray = Rgba(
   r: 0.9333333333333333,
   g: 0.9333333333333333,
@@ -537,7 +939,7 @@ pub const light_gray = Rgba(
   a: 1.0,
 )
 
-/// (211, 215, 207, 1.0)
+/// A `Colour` reprsenting the colour RGBA(211, 215, 207, 1.0)
 pub const gray = Rgba(
   r: 0.8274509803921568,
   g: 0.8431372549019608,
@@ -545,7 +947,7 @@ pub const gray = Rgba(
   a: 1.0,
 )
 
-/// (186, 189, 182, 1.0)
+/// A `Colour` reprsenting the colour RGBA(186, 189, 182, 1.0)
 pub const dark_gray = Rgba(
   r: 0.7294117647058823,
   g: 0.7411764705882353,
@@ -553,7 +955,7 @@ pub const dark_gray = Rgba(
   a: 1.0,
 )
 
-/// (136, 138, 133, 1.0)
+/// A `Colour` reprsenting the colour RGBA(136, 138, 133, 1.0)
 pub const light_charcoal = Rgba(
   r: 0.5333333333333333,
   g: 0.5411764705882353,
@@ -561,7 +963,7 @@ pub const light_charcoal = Rgba(
   a: 1.0,
 )
 
-/// (85, 87, 83, 1.0)
+/// A `Colour` reprsenting the colour RGBA(85, 87, 83, 1.0)
 pub const charcoal = Rgba(
   r: 0.3333333333333333,
   g: 0.3411764705882353,
@@ -569,7 +971,7 @@ pub const charcoal = Rgba(
   a: 1.0,
 )
 
-/// (46, 52, 54, 1.0)
+/// A `Colour` reprsenting the colour RGBA(46, 52, 54, 1.0)
 pub const dark_charcoal = Rgba(
   r: 0.1803921568627451,
   g: 0.20392156862745098,
@@ -577,7 +979,7 @@ pub const dark_charcoal = Rgba(
   a: 1.0,
 )
 
-/// (255, 175, 243, 1.0)
+/// A `Colour` reprsenting the colour RGBA(255, 175, 243, 1.0)
 pub const pink = Rgba(
   r: 1.0,
   g: 0.6862745098039216,
