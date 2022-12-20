@@ -53,7 +53,7 @@
 //// 
 //// ---
 ////
-//// This package was heavily inspired by the `elm-colour` module.
+//// This package was heavily inspired by the `elm-color` module.
 //// The original source code can be found
 //// <a href="https://github.com/avh4/elm-color/">here</a>.
 ////
