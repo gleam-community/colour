@@ -192,12 +192,12 @@ fn hex_string_to_int(hex_string: String) -> Result(Int, Nil) {
         Error(Nil) -> Error(Nil)
         Ok(v) -> {
           use num <- result.then(case char {
-            "f" -> Ok(15)
-            "e" -> Ok(14)
-            "d" -> Ok(13)
-            "c" -> Ok(12)
-            "b" -> Ok(11)
             "a" -> Ok(10)
+            "b" -> Ok(11)
+            "c" -> Ok(12)
+            "d" -> Ok(13)
+            "e" -> Ok(14)
+            "f" -> Ok(15)
             _ -> int.parse(char)
           })
           use base <- result.then(int.power(16, int.to_float(index)))
