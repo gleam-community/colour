@@ -130,3 +130,75 @@ pub fn too_large_from_hsla_test() {
   colour.from_hsla(h: 25.0, s: 0.25, l: 0.25, a: 1.0)
   |> should.equal(Error(Nil))
 }
+
+pub fn to_rgba_hex_string_test() {
+  assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
+
+  c
+  |> colour.to_rgba_hex_string()
+  |> should.equal("FFFFFFFF")
+
+  assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
+
+  c
+  |> colour.to_rgba_hex_string()
+  |> should.equal("FF0000FF")
+
+  colour.pink
+  |> colour.to_rgba_hex_string()
+  |> should.equal("FFAFF3FF")
+}
+
+pub fn to_rgb_hex_string_test() {
+  assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
+
+  c
+  |> colour.to_rgb_hex_string()
+  |> should.equal("FFFFFF")
+
+  assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
+
+  c
+  |> colour.to_rgb_hex_string()
+  |> should.equal("FF0000")
+
+  colour.pink
+  |> colour.to_rgb_hex_string()
+  |> should.equal("FFAFF3")
+}
+
+pub fn to_rgba_hex_test() {
+  assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
+
+  c
+  |> colour.to_rgba_hex()
+  |> should.equal(0xFFFFFFFF)
+
+  assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
+
+  c
+  |> colour.to_rgba_hex()
+  |> should.equal(0xFF0000FF)
+
+  colour.pink
+  |> colour.to_rgba_hex()
+  |> should.equal(0xFFAFF3FF)
+}
+
+pub fn to_rgb_hex_test() {
+  assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
+
+  c
+  |> colour.to_rgb_hex()
+  |> should.equal(0xFFFFFF)
+
+  assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
+
+  c
+  |> colour.to_rgb_hex()
+  |> should.equal(0xFF0000)
+
+  colour.pink
+  |> colour.to_rgb_hex()
+  |> should.equal(0xFFAFF3)
+}

@@ -16,6 +16,10 @@
 ////   - [`to_rgba`](#to_rgba)
 ////   - [`to_hsla`](#hsla)
 ////   - [`to_css_rgba_string`](#to_css_rgba_string)
+////   - [`to_rgba_hex_string`](#to_rgba_hex_string)
+////   - [`to_rgb_hex_string`](#to_rgb_hex_string)
+////   - [`to_rgba_hex`](#to_rgba_hex)
+////   - [`to_rgb_hex`](#to_rgb_hex)
 //// - **Colours**
 ////   - [`light_red`](#light_red)
 ////   - [`red`](#red)
@@ -187,17 +191,15 @@ fn hex_string_to_int(hex_string: String) -> Result(Int, Nil) {
       case total {
         Error(Nil) -> Error(Nil)
         Ok(v) -> {
-          use
-            num
-          <- result.then(case char {
-              "f" -> Ok(15)
-              "e" -> Ok(14)
-              "d" -> Ok(13)
-              "c" -> Ok(12)
-              "b" -> Ok(11)
-              "a" -> Ok(10)
-              _ -> int.parse(char)
-            })
+          use num <- result.then(case char {
+            "a" -> Ok(10)
+            "b" -> Ok(11)
+            "c" -> Ok(12)
+            "d" -> Ok(13)
+            "e" -> Ok(14)
+            "f" -> Ok(15)
+            _ -> int.parse(char)
+          })
           use base <- result.then(int.power(16, int.to_float(index)))
           Ok(v + float.round(int.to_float(num) *. base))
         }
@@ -295,32 +297,26 @@ fn rgba_to_hsla(
 /// </div>
 ///
 pub fn from_rgb255(r red: Int, g green: Int, b blue: Int) -> Result(Colour, Nil) {
-  use
-    r
-  <- result.then(
-      red
-      |> int.to_float()
-      |> float.divide(255.0)
-      |> result.then(valid_colour_value),
-    )
+  use r <- result.then(
+    red
+    |> int.to_float()
+    |> float.divide(255.0)
+    |> result.then(valid_colour_value),
+  )
 
-  use
-    g
-  <- result.then(
-      green
-      |> int.to_float()
-      |> float.divide(255.0)
-      |> result.then(valid_colour_value),
-    )
+  use g <- result.then(
+    green
+    |> int.to_float()
+    |> float.divide(255.0)
+    |> result.then(valid_colour_value),
+  )
 
-  use
-    b
-  <- result.then(
-      blue
-      |> int.to_float()
-      |> float.divide(255.0)
-      |> result.then(valid_colour_value),
-    )
+  use b <- result.then(
+    blue
+    |> int.to_float()
+    |> float.divide(255.0)
+    |> result.then(valid_colour_value),
+  )
 
   Ok(Rgba(r: r, g: g, b: b, a: 1.0))
 }
@@ -739,6 +735,149 @@ pub fn to_css_rgba_string(colour: Colour) -> String {
     ],
     "",
   )
+}
+
+/// Returns an rgba hex formatted `String` created from the given `Colour`.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_rgba(1.0, 0.0, 0.0, 1.0)
+///   let red_hex = to_rgba_hex_string(red)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
+pub fn to_rgba_hex_string(colour: Colour) -> String {
+  to_rgba_hex(colour)
+  |> int.to_base16()
+}
+
+/// Returns an rgb hex formatted `String` created from the given `Colour`.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_rgba(255, 0, 0)
+///   let red_hex = to_rgb_hex_string(red)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
+pub fn to_rgb_hex_string(colour: Colour) -> String {
+  to_rgb_hex(colour)
+  |> int.to_base16()
+}
+
+/// Returns an hex `Int` created from the given `Colour`.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_rgba(1.0, 0.0, 0.0, 1.0)
+///   let red_hex_int = to_rgba_hex(red)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
+pub fn to_rgba_hex(colour: Colour) -> Int {
+  let #(r, g, b, a) = to_rgba(colour)
+
+  let red =
+    r *. 255.0
+    |> float.round()
+    |> bitwise.shift_left(24)
+
+  let green =
+    g *. 255.0
+    |> float.round()
+    |> bitwise.shift_left(16)
+
+  let blue =
+    b *. 255.0
+    |> float.round()
+    |> bitwise.shift_left(8)
+
+  let alpha =
+    a *. 255.0
+    |> float.round()
+
+  red + green + blue + alpha
+}
+
+/// Returns a rgb hex `Int` created from the given `Colour`.
+///
+/// <details>
+/// <summary>Example:</summary>
+///
+/// ```gleam
+/// fn example() {
+///   assert Ok(red) = from_rgba(255, 0, 0)
+///   let red_hex_int = to_rgb_hex(red)
+/// }
+/// ```
+/// </details>
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
+pub fn to_rgb_hex(colour: Colour) -> Int {
+  let #(r, g, b, _) = to_rgba(colour)
+
+  let red =
+    r *. 255.0
+    |> float.round()
+    |> bitwise.shift_left(16)
+
+  let green =
+    g *. 255.0
+    |> float.round()
+    |> bitwise.shift_left(8)
+
+  let blue =
+    b *. 255.0
+    |> float.round()
+
+  red + green + blue
 }
 
 // COLOURS --------------------------------------------------------------------
