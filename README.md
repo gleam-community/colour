@@ -2,6 +2,9 @@
 
 A package for a standard Colour type, conversions, and other utilities.
 
+[![Package Version](https://img.shields.io/hexpm/v/gleam_community_colour)](https://hex.pm/packages/gleam_community_colour)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/gleam_community_colour/)
+
 ✨ This project is written in pure Gleam so you can use it anywhere Gleam runs: Erlang, Elixir, Node, Deno, and the browser!
 
 ---
