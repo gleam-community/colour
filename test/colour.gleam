@@ -41,7 +41,7 @@ pub fn from_rgba_test() {
   colour.from_rgba(1.0, 0.6862745098039216, 0.9529411764705882, 1.0)
   |> should.equal(Ok(colour.pink))
 
-  assert Ok(pink_half_opacity) =
+  let assert Ok(pink_half_opacity) =
     colour.from_rgba(1.0, 0.6862745098039216, 0.9529411764705882, 0.5)
 
   pink_half_opacity
@@ -97,7 +97,7 @@ pub fn too_large_from_rgb_hex_string_test() {
 }
 
 pub fn from_hsl_test() {
-  assert Ok(c) = colour.from_hsl(0.25, 0.25, 0.5)
+  let assert Ok(c) = colour.from_hsl(0.25, 0.25, 0.5)
 
   c
   |> colour.to_rgba()
@@ -115,7 +115,7 @@ pub fn too_large_from_hsl_test() {
 }
 
 pub fn from_hsla_test() {
-  assert Ok(c) = colour.from_hsla(h: 0.25, s: 0.25, l: 0.5, a: 1.0)
+  let assert Ok(c) = colour.from_hsla(h: 0.25, s: 0.25, l: 0.5, a: 1.0)
 
   colour.to_rgba(c)
   |> should.equal(#(0.5, 0.625, 0.375, 1.0))
@@ -132,13 +132,13 @@ pub fn too_large_from_hsla_test() {
 }
 
 pub fn to_rgba_hex_string_test() {
-  assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
+  let assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
 
   c
   |> colour.to_rgba_hex_string()
   |> should.equal("FFFFFFFF")
 
-  assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
+  let assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
 
   c
   |> colour.to_rgba_hex_string()
@@ -150,13 +150,13 @@ pub fn to_rgba_hex_string_test() {
 }
 
 pub fn to_rgb_hex_string_test() {
-  assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
+  let assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
 
   c
   |> colour.to_rgb_hex_string()
   |> should.equal("FFFFFF")
 
-  assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
+  let assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
 
   c
   |> colour.to_rgb_hex_string()
@@ -168,13 +168,13 @@ pub fn to_rgb_hex_string_test() {
 }
 
 pub fn to_rgba_hex_test() {
-  assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
+  let assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
 
   c
   |> colour.to_rgba_hex()
   |> should.equal(0xFFFFFFFF)
 
-  assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
+  let assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
 
   c
   |> colour.to_rgba_hex()
@@ -186,13 +186,13 @@ pub fn to_rgba_hex_test() {
 }
 
 pub fn to_rgb_hex_test() {
-  assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
+  let assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
 
   c
   |> colour.to_rgb_hex()
   |> should.equal(0xFFFFFF)
 
-  assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
+  let assert Ok(c) = colour.from_rgba(r: 1.0, g: 0.0, b: 0.0, a: 1.0)
 
   c
   |> colour.to_rgb_hex()

@@ -586,25 +586,25 @@ pub fn from_rgba_hex(hex: Int) -> Result(Colour, Nil) {
     True -> Error(Nil)
     False -> {
       // This won't fail because we are always dividing by 255.0
-      assert Ok(r) =
+      let assert Ok(r) =
         bitwise.shift_right(hex, 24)
         |> bitwise.and(0xff)
         |> int.to_float()
         |> float.divide(255.0)
       // This won't fail because we are always dividing by 255.0
-      assert Ok(g) =
+      let assert Ok(g) =
         bitwise.shift_right(hex, 16)
         |> bitwise.and(0xff)
         |> int.to_float()
         |> float.divide(255.0)
       // This won't fail because we are always dividing by 255.0
-      assert Ok(b) =
+      let assert Ok(b) =
         bitwise.shift_right(hex, 8)
         |> bitwise.and(0xff)
         |> int.to_float()
         |> float.divide(255.0)
       // This won't fail because we are always dividing by 255.0
-      assert Ok(a) =
+      let assert Ok(a) =
         bitwise.and(hex, 0xff)
         |> int.to_float()
         |> float.divide(255.0)
@@ -702,7 +702,7 @@ pub fn to_css_rgba_string(colour: Colour) -> String {
 
   let percent = fn(x: Float) -> Float {
     // This won't fail because we are always dividing by 100.0
-    assert Ok(p) =
+    let assert Ok(p) =
       x
       |> float.multiply(10_000.0)
       |> float.round()
@@ -714,7 +714,7 @@ pub fn to_css_rgba_string(colour: Colour) -> String {
 
   let round_to = fn(x: Float) -> Float {
     // This won't fail because we are always dividing by 1000.0
-    assert Ok(r) =
+    let assert Ok(r) =
       x
       |> float.multiply(1000.0)
       |> float.round()
