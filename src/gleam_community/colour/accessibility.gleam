@@ -59,7 +59,7 @@ fn intensity(colour_value: Float) -> Float {
     _ if colour_value <=. 0.03928 -> colour_value /. 12.92
     _ -> {
       // Is this guaranteed to be `OK`?
-      assert Ok(i) = float.power({ colour_value +. 0.055 } /. 1.055, 2.4)
+      let assert Ok(i) = float.power({ colour_value +. 0.055 } /. 1.055, 2.4)
       i
     }
   }
