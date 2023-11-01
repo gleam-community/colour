@@ -105,7 +105,6 @@
 
 // IMPORTS --------------------------------------------------------------------
 
-import gleam/bitwise
 import gleam/int
 import gleam/float
 import gleam/result
@@ -489,12 +488,12 @@ pub fn from_rgb_hex(hex: Int) -> Result(Colour, Nil) {
     True -> Error(Nil)
     False -> {
       let r =
-        bitwise.shift_right(hex, 16)
-        |> bitwise.and(0xff)
+        int.bitwise_shift_right(hex, 16)
+        |> int.bitwise_and(0xff)
       let g =
-        bitwise.shift_right(hex, 8)
-        |> bitwise.and(0xff)
-      let b = bitwise.and(hex, 0xff)
+        int.bitwise_shift_right(hex, 8)
+        |> int.bitwise_and(0xff)
+      let b = int.bitwise_and(hex, 0xff)
       from_rgb255(r, g, b)
     }
   }
@@ -587,25 +586,25 @@ pub fn from_rgba_hex(hex: Int) -> Result(Colour, Nil) {
     False -> {
       // This won't fail because we are always dividing by 255.0
       let assert Ok(r) =
-        bitwise.shift_right(hex, 24)
-        |> bitwise.and(0xff)
+        int.bitwise_shift_right(hex, 24)
+        |> int.bitwise_and(0xff)
         |> int.to_float()
         |> float.divide(255.0)
       // This won't fail because we are always dividing by 255.0
       let assert Ok(g) =
-        bitwise.shift_right(hex, 16)
-        |> bitwise.and(0xff)
+        int.bitwise_shift_right(hex, 16)
+        |> int.bitwise_and(0xff)
         |> int.to_float()
         |> float.divide(255.0)
       // This won't fail because we are always dividing by 255.0
       let assert Ok(b) =
-        bitwise.shift_right(hex, 8)
-        |> bitwise.and(0xff)
+        int.bitwise_shift_right(hex, 8)
+        |> int.bitwise_and(0xff)
         |> int.to_float()
         |> float.divide(255.0)
       // This won't fail because we are always dividing by 255.0
       let assert Ok(a) =
-        bitwise.and(hex, 0xff)
+        int.bitwise_and(hex, 0xff)
         |> int.to_float()
         |> float.divide(255.0)
       from_rgba(r, g, b, a)
@@ -819,17 +818,17 @@ pub fn to_rgba_hex(colour: Colour) -> Int {
   let red =
     r *. 255.0
     |> float.round()
-    |> bitwise.shift_left(24)
+    |> int.bitwise_shift_left(24)
 
   let green =
     g *. 255.0
     |> float.round()
-    |> bitwise.shift_left(16)
+    |> int.bitwise_shift_left(16)
 
   let blue =
     b *. 255.0
     |> float.round()
-    |> bitwise.shift_left(8)
+    |> int.bitwise_shift_left(8)
 
   let alpha =
     a *. 255.0
@@ -866,12 +865,12 @@ pub fn to_rgb_hex(colour: Colour) -> Int {
   let red =
     r *. 255.0
     |> float.round()
-    |> bitwise.shift_left(16)
+    |> int.bitwise_shift_left(16)
 
   let green =
     g *. 255.0
     |> float.round()
-    |> bitwise.shift_left(8)
+    |> int.bitwise_shift_left(8)
 
   let blue =
     b *. 255.0
