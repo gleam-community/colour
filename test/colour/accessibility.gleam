@@ -22,9 +22,10 @@ pub fn luminance_test() {
 }
 
 pub fn maximum_contrast_test() {
-  accessibility.maximum_contrast(
-    colour.yellow,
-    [colour.white, colour.dark_blue, colour.green],
-  )
+  accessibility.maximum_contrast(colour.yellow, [
+    colour.white,
+    colour.dark_blue,
+    colour.green,
+  ])
   |> should.equal(Ok(colour.dark_blue))
 }
