@@ -184,27 +184,24 @@ fn hex_string_to_int(hex_string: String) -> Result(Int, Nil) {
   |> string.lowercase()
   |> string.to_graphemes()
   |> list.reverse()
-  |> list.index_fold(
-    Ok(0),
-    fn(total, char, index) {
-      case total {
-        Error(Nil) -> Error(Nil)
-        Ok(v) -> {
-          use num <- result.then(case char {
-            "a" -> Ok(10)
-            "b" -> Ok(11)
-            "c" -> Ok(12)
-            "d" -> Ok(13)
-            "e" -> Ok(14)
-            "f" -> Ok(15)
-            _ -> int.parse(char)
-          })
-          use base <- result.then(int.power(16, int.to_float(index)))
-          Ok(v + float.round(int.to_float(num) *. base))
-        }
+  |> list.index_fold(Ok(0), fn(total, char, index) {
+    case total {
+      Error(Nil) -> Error(Nil)
+      Ok(v) -> {
+        use num <- result.then(case char {
+          "a" -> Ok(10)
+          "b" -> Ok(11)
+          "c" -> Ok(12)
+          "d" -> Ok(13)
+          "e" -> Ok(14)
+          "f" -> Ok(15)
+          _ -> int.parse(char)
+        })
+        use base <- result.then(int.power(16, int.to_float(index)))
+        Ok(v + float.round(int.to_float(num) *. base))
       }
-    },
-  )
+    }
+  })
 }
 
 fn hsla_to_rgba(
@@ -263,7 +260,8 @@ fn rgba_to_hsla(
   let s = case True {
     _ if min_colour == max_colour -> 0.0
     _ if l <. 0.5 ->
-      { max_colour -. min_colour } /. { max_colour +. min_colour }
+      { max_colour -. min_colour }
+      /. { max_colour +. min_colour }
     _ -> { max_colour -. min_colour } /. { 2.0 -. max_colour -. min_colour }
   }
 
@@ -726,9 +724,12 @@ pub fn to_css_rgba_string(colour: Colour) -> String {
   string.join(
     [
       "rgba(",
-      float.to_string(percent(r)) <> "%,",
-      float.to_string(percent(g)) <> "%,",
-      float.to_string(percent(b)) <> "%,",
+      float.to_string(percent(r))
+      <> "%,",
+      float.to_string(percent(g))
+      <> "%,",
+      float.to_string(percent(b))
+      <> "%,",
       float.to_string(round_to(a)),
       ")",
     ],
@@ -816,22 +817,26 @@ pub fn to_rgba_hex(colour: Colour) -> Int {
   let #(r, g, b, a) = to_rgba(colour)
 
   let red =
-    r *. 255.0
+    r
+    *. 255.0
     |> float.round()
     |> int.bitwise_shift_left(24)
 
   let green =
-    g *. 255.0
+    g
+    *. 255.0
     |> float.round()
     |> int.bitwise_shift_left(16)
 
   let blue =
-    b *. 255.0
+    b
+    *. 255.0
     |> float.round()
     |> int.bitwise_shift_left(8)
 
   let alpha =
-    a *. 255.0
+    a
+    *. 255.0
     |> float.round()
 
   red + green + blue + alpha
@@ -863,17 +868,20 @@ pub fn to_rgb_hex(colour: Colour) -> Int {
   let #(r, g, b, _) = to_rgba(colour)
 
   let red =
-    r *. 255.0
+    r
+    *. 255.0
     |> float.round()
     |> int.bitwise_shift_left(16)
 
   let green =
-    g *. 255.0
+    g
+    *. 255.0
     |> float.round()
     |> int.bitwise_shift_left(8)
 
   let blue =
-    b *. 255.0
+    b
+    *. 255.0
     |> float.round()
 
   red + green + blue
