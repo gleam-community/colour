@@ -9,11 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - uses: erlef/setup-beam@v1
+      - uses: actions/checkout@v3.1.0
+      - uses: erlef/setup-beam@v1.16.0
         with:
-          otp-version: "26.1"
+          otp-version: "26.0.2"
           gleam-version: "1.0.0"
 
       - run: |
