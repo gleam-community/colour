@@ -1,4 +1,4 @@
-//// 
+////
 //// - **Types**
 ////   - [`Colour`](#Colour)
 ////   - [`Color`](#Color)
@@ -20,6 +20,9 @@
 ////   - [`to_rgb_hex_string`](#to_rgb_hex_string)
 ////   - [`to_rgba_hex`](#to_rgba_hex)
 ////   - [`to_rgb_hex`](#to_rgb_hex)
+//// - **JSON**
+////   - [`encode`](#encode)
+////   - [`decoder`](#decoder)
 //// - **Colours**
 ////   - [`light_red`](#light_red)
 ////   - [`red`](#red)
@@ -54,7 +57,7 @@
 ////   - [`charcoal`](#charcoal)
 ////   - [`dark_charcoal`](#dark_charcoal)
 ////   - [`pink`](#pink)
-//// 
+////
 //// ---
 ////
 //// This package was heavily inspired by the `elm-color` module.
@@ -63,32 +66,32 @@
 ////
 //// <details>
 //// <summary>The license of that package is produced below:</summary>
-//// 
-//// 
+////
+////
 //// > MIT License
 ////
 //// > Copyright 2018 Aaron VonderHaar
 ////
-//// > Redistribution and use in source and binary forms, with or without modification, 
+//// > Redistribution and use in source and binary forms, with or without modification,
 //// are permitted provided that the following conditions are met:
 ////
-////   1. Redistributions of source code must retain the above copyright notice, 
+////   1. Redistributions of source code must retain the above copyright notice,
 ////    this list of conditions and the following disclaimer.
 ////
-////   2. Redistributions in binary form must reproduce the above copyright notice, 
-////    this list of conditions and the following disclaimer in the documentation 
+////   2. Redistributions in binary form must reproduce the above copyright notice,
+////    this list of conditions and the following disclaimer in the documentation
 ////    and/or other materials provided with the distribution.
 ////
-////   3. Neither the name of the copyright holder nor the names of its contributors 
-////    may be used to endorse or promote products derived from this software without 
+////   3. Neither the name of the copyright holder nor the names of its contributors
+////    may be used to endorse or promote products derived from this software without
 ////    specific prior written permission.
 ////
-//// > THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
-//// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
-//// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
-//// THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
-//// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS 
-//// OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY 
+//// > THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+//// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+//// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+//// THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+//// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+//// OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 //// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 //// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ////
@@ -105,11 +108,13 @@
 
 // IMPORTS --------------------------------------------------------------------
 
-import gleam/int
+import gleam/dynamic.{type DecodeError, type Dynamic}
 import gleam/float
+import gleam/int
+import gleam/json.{type Json}
+import gleam/list
 import gleam/result
 import gleam/string
-import gleam/list
 
 // TYPES ----------------------------------------------------------------------
 
@@ -260,8 +265,7 @@ fn rgba_to_hsla(
   let s = case True {
     _ if min_colour == max_colour -> 0.0
     _ if l <. 0.5 ->
-      { max_colour -. min_colour }
-      /. { max_colour +. min_colour }
+      { max_colour -. min_colour } /. { max_colour +. min_colour }
     _ -> { max_colour -. min_colour } /. { 2.0 -. max_colour -. min_colour }
   }
 
@@ -724,12 +728,9 @@ pub fn to_css_rgba_string(colour: Colour) -> String {
   string.join(
     [
       "rgba(",
-      float.to_string(percent(r))
-      <> "%,",
-      float.to_string(percent(g))
-      <> "%,",
-      float.to_string(percent(b))
-      <> "%,",
+      float.to_string(percent(r)) <> "%,",
+      float.to_string(percent(g)) <> "%,",
+      float.to_string(percent(b)) <> "%,",
       float.to_string(round_to(a)),
       ")",
     ],
@@ -817,26 +818,22 @@ pub fn to_rgba_hex(colour: Colour) -> Int {
   let #(r, g, b, a) = to_rgba(colour)
 
   let red =
-    r
-    *. 255.0
+    r *. 255.0
     |> float.round()
     |> int.bitwise_shift_left(24)
 
   let green =
-    g
-    *. 255.0
+    g *. 255.0
     |> float.round()
     |> int.bitwise_shift_left(16)
 
   let blue =
-    b
-    *. 255.0
+    b *. 255.0
     |> float.round()
     |> int.bitwise_shift_left(8)
 
   let alpha =
-    a
-    *. 255.0
+    a *. 255.0
     |> float.round()
 
   red + green + blue + alpha
@@ -868,26 +865,99 @@ pub fn to_rgb_hex(colour: Colour) -> Int {
   let #(r, g, b, _) = to_rgba(colour)
 
   let red =
-    r
-    *. 255.0
+    r *. 255.0
     |> float.round()
     |> int.bitwise_shift_left(16)
 
   let green =
-    g
-    *. 255.0
+    g *. 255.0
     |> float.round()
     |> int.bitwise_shift_left(8)
 
   let blue =
-    b
-    *. 255.0
+    b *. 255.0
     |> float.round()
 
   red + green + blue
 }
 
-// COLOURS --------------------------------------------------------------------
+// JSON ------------------------------------------------------------------------
+
+/// Encodes a `Colour` value as a Gleam [`Json`](https://hexdocs.pm/gleam_json/gleam/json.html#Json)
+/// value. You'll need this if you want to send a `Colour` value over the network
+/// in a HTTP request or response, for example.
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
+pub fn encode(colour: Colour) -> Json {
+  case colour {
+    Rgba(r, g, b, a) -> encode_rgba(r, g, b, a)
+    Hsla(h, s, l, a) -> encode_hsla(h, s, l, a)
+  }
+}
+
+fn encode_rgba(r: Float, g: Float, b: Float, a: Float) -> Json {
+  json.object([
+    #("r", json.float(r)),
+    #("g", json.float(g)),
+    #("b", json.float(b)),
+    #("a", json.float(a)),
+  ])
+}
+
+fn encode_hsla(h: Float, s: Float, l: Float, a: Float) -> Json {
+  json.object([
+    #("h", json.float(h)),
+    #("s", json.float(s)),
+    #("l", json.float(l)),
+    #("a", json.float(a)),
+  ])
+}
+
+/// Attempt to decode some [`Dynamic`](https://hexdocs.pm/gleam_stdlib/gleam/dynamic.html#Dynamic)
+/// value into a `Colour`. Most often you'll use this to decode some JSON.
+///
+/// <div style="position: relative;">
+///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
+///         <small>Spot a typo? Open an issue!</small>
+///     </a>
+///     <a style="position: absolute; right: 0;" href="#">
+///         <small>Back to top ↑</small>
+///     </a>
+/// </div>
+///
+pub fn decoder(json: Dynamic) -> Result(Colour, List(DecodeError)) {
+  dynamic.any([rgba_decoder, hsla_decoder])(json)
+}
+
+fn rgba_decoder(json: Dynamic) -> Result(Colour, List(DecodeError)) {
+  dynamic.decode4(
+    Rgba,
+    dynamic.field("r", dynamic.float),
+    dynamic.field("g", dynamic.float),
+    dynamic.field("b", dynamic.float),
+    dynamic.field("a", dynamic.float),
+  )(json)
+}
+
+fn hsla_decoder(json: Dynamic) -> Result(Colour, List(DecodeError)) {
+  dynamic.decode4(
+    Hsla,
+    dynamic.field("h", dynamic.float),
+    dynamic.field("s", dynamic.float),
+    dynamic.field("l", dynamic.float),
+    dynamic.field("a", dynamic.float),
+  )(json)
+}
+
+// COLOURS ---------------------------------------------------------------------
 
 /// A `Colour` reprsenting the colour RGBA(239, 41, 41, 1.0)
 pub const light_red = Rgba(
