@@ -1,3 +1,4 @@
+import gleam/json
 import gleeunit/should
 import gleam_community/colour
 
@@ -201,4 +202,14 @@ pub fn to_rgb_hex_test() {
   colour.pink
   |> colour.to_rgb_hex()
   |> should.equal(0xFFAFF3)
+}
+
+pub fn json_identiy_test() {
+  let assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
+
+  c
+  |> colour.encode
+  |> json.to_string
+  |> json.decode(colour.decoder)
+  |> should.equal(Ok(c))
 }
