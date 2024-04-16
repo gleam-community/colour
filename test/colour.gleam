@@ -1,4 +1,6 @@
 import gleam/json
+import gleam/float
+import gleam/string
 import gleeunit/should
 import gleam_community/colour
 
@@ -212,4 +214,28 @@ pub fn json_identiy_test() {
   |> json.to_string
   |> json.decode(colour.decoder)
   |> should.equal(Ok(c))
+}
+
+pub fn rgba_to_oklab_test() {
+  let assert Ok(oklab) = colour.rgba_to_oklab(r: 1.0, g: 0.0, b: 1.0, a: 1.0)
+
+  let #(l, a, b, alpha) = oklab
+
+  should.equal(alpha, 1.0)
+  should_be_close(l, 0.7017, 0.0001)
+  should_be_close(a, 0.27, 0.01)
+  should_be_close(b, -0.17, 0.01)
+}
+
+fn should_be_close(a: Float, b: Float, delta: Float) -> Nil {
+  case float.absolute_value({ a -. b }) <=. delta {
+    True -> Nil
+    _ ->
+      panic as string.concat([
+        "\n\t",
+        string.inspect(a),
+        "\n\tshould be close to \n\t",
+        string.inspect(b),
+      ])
+  }
 }
