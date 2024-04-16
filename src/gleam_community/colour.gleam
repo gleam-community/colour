@@ -272,6 +272,51 @@ fn rgba_to_hsla(
   #(h3, s, l, a)
 }
 
+fn cube_root(x: Float) -> Result(Float, Nil) {
+  float.power(x, { 1.0 /. 3.0 })
+}
+
+pub fn rgba_to_oklab(
+  r red: Float,
+  g green: Float,
+  b blue: Float,
+  a alpha: Float,
+) -> Result(#(Float, Float, Float, Float), Nil) {
+  let l = 0.4122214708 *. red +. 0.5363325363 *. green +. 0.0514459929 *. blue
+  let m = 0.2119034982 *. red +. 0.6806995451 *. green +. 0.1073969566 *. blue
+  let s = 0.0883024619 *. red +. 0.2817188376 *. green +. 0.6299787005 *. blue
+
+  use l_cube_root <- result.try(cube_root(l))
+  use m_cube_root <- result.try(cube_root(m))
+  use s_cube_root <- result.try(cube_root(s))
+
+  let big_l =
+    0.2104542553
+    *. l_cube_root
+    +. 0.793617785
+    *. m_cube_root
+    -. 0.0040720468
+    *. s_cube_root
+
+  let a =
+    1.9779984951
+    *. l_cube_root
+    -. 2.428592205
+    *. m_cube_root
+    +. 0.4505937099
+    *. s_cube_root
+
+  let b =
+    0.0259040371
+    *. l_cube_root
+    +. 0.7827717662
+    *. m_cube_root
+    -. 0.808675766
+    *. s_cube_root
+
+  Ok(#(big_l, a, b, alpha))
+}
+
 // CONSTRUCTORS ---------------------------------------------------------------
 
 /// Returns a `Result(Colour)` created from the given 8 bit RGB values.
