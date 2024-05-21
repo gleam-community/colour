@@ -1,6 +1,6 @@
 import gleam/json
-import gleeunit/should
 import gleam_community/colour
+import gleeunit/should
 
 pub fn from_rgb255_test() {
   colour.from_rgb255(204, 0, 0)

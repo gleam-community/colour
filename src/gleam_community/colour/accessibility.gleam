@@ -1,4 +1,4 @@
-//// 
+////
 //// - **Accessibility**
 ////   - [`luminance`](#luminance)
 ////   - [`contrast_ratio`](#contrast_ratio)
@@ -12,8 +12,8 @@
 ////
 //// <details>
 //// <summary>The license of that package is produced below:</summary>
-//// 
-//// 
+////
+////
 //// > MIT License
 ////
 //// > Copyright (c) 2016 Andreas Köberle
@@ -55,9 +55,9 @@ import gleam_community/colour.{type Colour}
 
 fn intensity(colour_value: Float) -> Float {
   // Calculation taken from https://www.w3.org/TR/WCAG20/#relativeluminancedef
-  case True {
-    _ if colour_value <=. 0.03928 -> colour_value /. 12.92
-    _ -> {
+  case colour_value <=. 0.03928 {
+    True -> colour_value /. 12.92
+    False -> {
       // Is this guaranteed to be `OK`?
       let assert Ok(i) = float.power({ colour_value +. 0.055 } /. 1.055, 2.4)
       i

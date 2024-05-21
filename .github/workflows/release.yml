@@ -9,11 +9,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3.1.0
-      - uses: erlef/setup-beam@v1.16.0
+      - uses: actions/checkout@v3
+      - uses: erlef/setup-beam@v1
         with:
-          otp-version: "26.0.2"
-          gleam-version: "1.0.0"
+          otp-version: "26.2.5"
+          gleam-version: "1.1.0"
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "16.20.2"
 
       - run: |
           version="v$(cat gleam.toml | grep -m 1 "version" | sed -r "s/version *= *\"([[:digit:].]+)\"/\1/")"
@@ -24,13 +27,12 @@ jobs:
           fi
         name: check version
 
-      - run: gleam format --check
+      - run: gleam format --check src test
+      - run: gleam test --target erlang
+      - run: gleam test --target javascript
 
-      - run: gleam test
-
-      - run: gleam publish -y
+      - run: gleam publish --yes
         env:
           HEXPM_USER: ${{ secrets.HEX_USERNAME }}
           HEXPM_PASS: ${{ secrets.HEX_PASSWORD }}
-
       - uses: softprops/action-gh-release@v1
