@@ -2,9 +2,7 @@
 
 ## Unreleased
 
-- Updated dependencies and code to be in line with Gleam 1.0.0.
-- Fix syntax to not throw a compiler warning when compiling with
-  Gleam >= 1.2.0.
+- Require Gleam >= 1.0.0, updated dependencies to be in line with Gleam 1.0.0, and fix syntax to not throw a compiler warning when compiling with Gleam >= 1.2.0.
 
 ## 1.1.0 - Unreleased
 
