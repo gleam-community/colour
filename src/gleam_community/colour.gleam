@@ -239,12 +239,12 @@ fn rgba_to_hsla(
 
   let max_colour = float.max(r, float.max(g, b))
 
-  let h1 = case True {
-    _ if max_colour == r -> float.divide(g -. b, max_colour -. min_colour)
-    _ if max_colour == g ->
+  let h1 = case max_colour == r, max_colour == g {
+    True, _ -> float.divide(g -. b, max_colour -. min_colour)
+    _, True ->
       float.divide(b -. r, max_colour -. min_colour)
       |> result.then(fn(d) { Ok(2.0 +. d) })
-    _ ->
+    _, _ ->
       float.divide(r -. g, max_colour -. min_colour)
       |> result.then(fn(d) { Ok(4.0 +. d) })
   }
@@ -262,11 +262,10 @@ fn rgba_to_hsla(
 
   let l = { min_colour +. max_colour } /. 2.0
 
-  let s = case True {
-    _ if min_colour == max_colour -> 0.0
-    _ if l <. 0.5 ->
-      { max_colour -. min_colour } /. { max_colour +. min_colour }
-    _ -> { max_colour -. min_colour } /. { 2.0 -. max_colour -. min_colour }
+  let s = case min_colour == max_colour, l <. 0.5 {
+    True, _ -> 0.0
+    _, True -> { max_colour -. min_colour } /. { max_colour +. min_colour }
+    _, _ -> { max_colour -. min_colour } /. { 2.0 -. max_colour -. min_colour }
   }
 
   #(h3, s, l, a)
