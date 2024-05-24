@@ -11,4 +11,3 @@ node_modules/
 *.beam
 *.ez
 *.log
-.tool-versions
