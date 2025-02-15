@@ -108,7 +108,7 @@
 
 // IMPORTS --------------------------------------------------------------------
 
-import gleam/dynamic.{type DecodeError, type Dynamic}
+import gleam/dynamic/decode
 import gleam/float
 import gleam/int
 import gleam/json.{type Json}
@@ -933,28 +933,26 @@ fn encode_hsla(h: Float, s: Float, l: Float, a: Float) -> Json {
 ///     </a>
 /// </div>
 ///
-pub fn decoder(json: Dynamic) -> Result(Colour, List(DecodeError)) {
-  dynamic.any([rgba_decoder, hsla_decoder])(json)
+pub fn decoder() -> decode.Decoder(Colour) {
+  decode.one_of(rgba_decoder(), or: [hsla_decoder()])
 }
 
-fn rgba_decoder(json: Dynamic) -> Result(Colour, List(DecodeError)) {
-  dynamic.decode4(
-    Rgba,
-    dynamic.field("r", dynamic.float),
-    dynamic.field("g", dynamic.float),
-    dynamic.field("b", dynamic.float),
-    dynamic.field("a", dynamic.float),
-  )(json)
+fn rgba_decoder() -> decode.Decoder(Colour) {
+  use r <- decode.field("r", decode.float)
+  use g <- decode.field("g", decode.float)
+  use b <- decode.field("b", decode.float)
+  use a <- decode.field("a", decode.float)
+
+  decode.success(Rgba(r, g, b, a))
 }
 
-fn hsla_decoder(json: Dynamic) -> Result(Colour, List(DecodeError)) {
-  dynamic.decode4(
-    Hsla,
-    dynamic.field("h", dynamic.float),
-    dynamic.field("s", dynamic.float),
-    dynamic.field("l", dynamic.float),
-    dynamic.field("a", dynamic.float),
-  )(json)
+fn hsla_decoder() -> decode.Decoder(Colour) {
+  use h <- decode.field("h", decode.float)
+  use s <- decode.field("s", decode.float)
+  use l <- decode.field("l", decode.float)
+  use a <- decode.field("a", decode.float)
+
+  decode.success(Hsla(h, s, l, a))
 }
 
 // COLOURS ---------------------------------------------------------------------

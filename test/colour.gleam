@@ -210,6 +210,6 @@ pub fn json_identiy_test() {
   c
   |> colour.encode
   |> json.to_string
-  |> json.decode(colour.decoder)
+  |> json.parse(colour.decoder())
   |> should.equal(Ok(c))
 }
