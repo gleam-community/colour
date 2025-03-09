@@ -20,8 +20,10 @@ jobs:
         with:
           otp-version: "27.0"
           rebar3-version: "3"
-          gleam-version: "1.5.1"
+          gleam-version: "1.8.0"
 
       - run: gleam format --check
 
-      - run: gleam test
+      - run: gleam test --target erlang
+
+      - run: gleam test --target javascript
