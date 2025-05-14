@@ -761,8 +761,14 @@ pub fn to_css_rgba_string(colour: Colour) -> String {
 /// </div>
 ///
 pub fn to_rgba_hex_string(colour: Colour) -> String {
-  to_rgba_hex(colour)
-  |> int.to_base16()
+  let hex_string =
+    to_rgba_hex(colour)
+    |> int.to_base16()
+
+  case string.length(hex_string) {
+    8 -> hex_string
+    l -> string.repeat("0", 8 - l) <> hex_string
+  }
 }
 
 /// Returns an rgb hex formatted `String` created from the given `Colour`.
@@ -788,8 +794,14 @@ pub fn to_rgba_hex_string(colour: Colour) -> String {
 /// </div>
 ///
 pub fn to_rgb_hex_string(colour: Colour) -> String {
-  to_rgb_hex(colour)
-  |> int.to_base16()
+  let hex_string =
+    to_rgb_hex(colour)
+    |> int.to_base16()
+
+  case string.length(hex_string) {
+    6 -> hex_string
+    l -> string.repeat("0", 6 - l) <> hex_string
+  }
 }
 
 /// Returns an hex `Int` created from the given `Colour`.

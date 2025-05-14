@@ -150,6 +150,20 @@ pub fn to_rgba_hex_string_test() {
   |> should.equal("FFAFF3FF")
 }
 
+pub fn pad_rgba_hex_string_test() {
+  let assert Ok(c) = colour.from_rgba(r: 0.0, g: 1.0, b: 0.0, a: 1.0)
+
+  c
+  |> colour.to_rgba_hex_string()
+  |> should.equal("00FF00FF")
+
+  let assert Ok(c) = colour.from_rgba(r: 0.0, g: 0.0, b: 0.0, a: 1.0)
+
+  c
+  |> colour.to_rgba_hex_string()
+  |> should.equal("000000FF")
+}
+
 pub fn to_rgb_hex_string_test() {
   let assert Ok(c) = colour.from_rgba(r: 1.0, g: 1.0, b: 1.0, a: 1.0)
 
@@ -166,6 +180,20 @@ pub fn to_rgb_hex_string_test() {
   colour.pink
   |> colour.to_rgb_hex_string()
   |> should.equal("FFAFF3")
+}
+
+pub fn pad_rgb_hex_string_test() {
+  let assert Ok(c) = colour.from_rgb(r: 0.0, g: 1.0, b: 0.0)
+
+  c
+  |> colour.to_rgb_hex_string()
+  |> should.equal("00FF00")
+
+  let assert Ok(c) = colour.from_rgb(r: 0.0, g: 0.0, b: 0.0)
+
+  c
+  |> colour.to_rgb_hex_string()
+  |> should.equal("000000")
 }
 
 pub fn to_rgba_hex_test() {
