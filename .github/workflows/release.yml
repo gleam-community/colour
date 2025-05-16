@@ -27,7 +27,9 @@ jobs:
 
       - run: gleam format --check
 
-      - run: gleam test
+      - run: gleam test --target erlang
+
+      - run: gleam test --target javascript
 
       - run: gleam publish -y
         env:
