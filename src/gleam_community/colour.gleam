@@ -193,7 +193,7 @@ fn hex_string_to_int(hex_string: String) -> Result(Int, Nil) {
     case total {
       Error(Nil) -> Error(Nil)
       Ok(v) -> {
-        use num <- result.then(case char {
+        use num <- result.try(case char {
           "a" -> Ok(10)
           "b" -> Ok(11)
           "c" -> Ok(12)
@@ -202,7 +202,7 @@ fn hex_string_to_int(hex_string: String) -> Result(Int, Nil) {
           "f" -> Ok(15)
           _ -> int.parse(char)
         })
-        use base <- result.then(int.power(16, int.to_float(index)))
+        use base <- result.try(int.power(16, int.to_float(index)))
         Ok(v + float.round(int.to_float(num) *. base))
       }
     }
@@ -243,10 +243,10 @@ fn rgba_to_hsla(
     _ if max_colour == r -> float.divide(g -. b, max_colour -. min_colour)
     _ if max_colour == g ->
       float.divide(b -. r, max_colour -. min_colour)
-      |> result.then(fn(d) { Ok(2.0 +. d) })
+      |> result.try(fn(d) { Ok(2.0 +. d) })
     _ ->
       float.divide(r -. g, max_colour -. min_colour)
-      |> result.then(fn(d) { Ok(4.0 +. d) })
+      |> result.try(fn(d) { Ok(4.0 +. d) })
   }
 
   let h2 = case h1 {
@@ -298,25 +298,25 @@ fn rgba_to_hsla(
 /// </div>
 ///
 pub fn from_rgb255(r red: Int, g green: Int, b blue: Int) -> Result(Colour, Nil) {
-  use r <- result.then(
+  use r <- result.try(
     red
     |> int.to_float()
     |> float.divide(255.0)
-    |> result.then(valid_colour_value),
+    |> result.try(valid_colour_value),
   )
 
-  use g <- result.then(
+  use g <- result.try(
     green
     |> int.to_float()
     |> float.divide(255.0)
-    |> result.then(valid_colour_value),
+    |> result.try(valid_colour_value),
   )
 
-  use b <- result.then(
+  use b <- result.try(
     blue
     |> int.to_float()
     |> float.divide(255.0)
-    |> result.then(valid_colour_value),
+    |> result.try(valid_colour_value),
   )
 
   Ok(Rgba(r: r, g: g, b: b, a: 1.0))
@@ -350,9 +350,9 @@ pub fn from_rgb(
   g green: Float,
   b blue: Float,
 ) -> Result(Colour, Nil) {
-  use r <- result.then(valid_colour_value(red))
-  use g <- result.then(valid_colour_value(green))
-  use b <- result.then(valid_colour_value(blue))
+  use r <- result.try(valid_colour_value(red))
+  use g <- result.try(valid_colour_value(green))
+  use b <- result.try(valid_colour_value(blue))
 
   Ok(Rgba(r: r, g: g, b: b, a: 1.0))
 }
@@ -386,10 +386,10 @@ pub fn from_rgba(
   b blue: Float,
   a alpha: Float,
 ) -> Result(Colour, Nil) {
-  use r <- result.then(valid_colour_value(red))
-  use g <- result.then(valid_colour_value(green))
-  use b <- result.then(valid_colour_value(blue))
-  use a <- result.then(valid_colour_value(alpha))
+  use r <- result.try(valid_colour_value(red))
+  use g <- result.try(valid_colour_value(green))
+  use b <- result.try(valid_colour_value(blue))
+  use a <- result.try(valid_colour_value(alpha))
 
   Ok(Rgba(r: r, g: g, b: b, a: a))
 }
@@ -423,10 +423,10 @@ pub fn from_hsla(
   l lightness: Float,
   a alpha: Float,
 ) -> Result(Colour, Nil) {
-  use h <- result.then(valid_colour_value(hue))
-  use s <- result.then(valid_colour_value(saturation))
-  use l <- result.then(valid_colour_value(lightness))
-  use a <- result.then(valid_colour_value(alpha))
+  use h <- result.try(valid_colour_value(hue))
+  use s <- result.try(valid_colour_value(saturation))
+  use l <- result.try(valid_colour_value(lightness))
+  use a <- result.try(valid_colour_value(alpha))
 
   Ok(Hsla(h: h, s: s, l: l, a: a))
 }
@@ -525,7 +525,7 @@ pub fn from_rgb_hex(hex: Int) -> Result(Colour, Nil) {
 /// </div>
 ///
 pub fn from_rgb_hex_string(hex_string: String) -> Result(Colour, Nil) {
-  use hex_int <- result.then(hex_string_to_int(hex_string))
+  use hex_int <- result.try(hex_string_to_int(hex_string))
 
   from_rgb_hex(hex_int)
 }
@@ -554,7 +554,7 @@ pub fn from_rgb_hex_string(hex_string: String) -> Result(Colour, Nil) {
 /// </div>
 ///
 pub fn from_rgba_hex_string(hex_string: String) -> Result(Colour, Nil) {
-  use hex_int <- result.then(hex_string_to_int(hex_string))
+  use hex_int <- result.try(hex_string_to_int(hex_string))
 
   from_rgba_hex(hex_int)
 }
