@@ -97,7 +97,6 @@
 //// > The above copyright notice and this permission notice shall be included in all
 //// copies or substantial portions of the Software.
 //// </details>
-////
 
 // Just in case we decide in the future to no longer include the above reference
 // and license, this package was initially a port of the `elm-color` module:
