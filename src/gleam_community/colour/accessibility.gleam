@@ -1,4 +1,3 @@
-//// 
 //// - **Accessibility**
 ////   - [`luminance`](#luminance)
 ////   - [`contrast_ratio`](#contrast_ratio)
@@ -37,7 +36,6 @@
 //// SOFTWARE.
 ////
 //// </details>
-////
 
 // Just in case we decide in the future to no longer include the above reference
 // and license, this package was initially a port of the `elm-color-extra` module:
@@ -80,15 +78,6 @@ fn intensity(colour_value: Float) -> Float {
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn luminance(colour: Colour) -> Float {
   // Calculation taken from https://www.w3.org/TR/WCAG20/#relativeluminancedef
   let #(r, g, b, _) = colour.to_rgba(colour)
@@ -112,15 +101,6 @@ pub fn luminance(colour: Colour) -> Float {
 /// }
 /// ```
 /// </details>
-///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
 ///
 pub fn contrast_ratio(between colour_a: Colour, and colour_b: Colour) -> Float {
   // Calculation taken from https://www.w3.org/TR/WCAG20/#contrast-ratiodef
@@ -148,15 +128,6 @@ pub fn contrast_ratio(between colour_a: Colour, and colour_b: Colour) -> Float {
 /// }
 /// ```
 /// </details>
-///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
 ///
 pub fn maximum_contrast(
   base: Colour,
