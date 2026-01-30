@@ -1,4 +1,3 @@
-////
 //// - **Types**
 ////   - [`Colour`](#Colour)
 ////   - [`Color`](#Color)
@@ -98,7 +97,6 @@
 //// > The above copyright notice and this permission notice shall be included in all
 //// copies or substantial portions of the Software.
 //// </details>
-////
 
 // Just in case we decide in the future to no longer include the above reference
 // and license, this package was initially a port of the `elm-color` module:
@@ -120,32 +118,12 @@ import gleam/string
 
 /// A representation of a colour that can be converted to RGBA or HSLA format.
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-/// </br>
-///
 pub opaque type Colour {
   Rgba(r: Float, g: Float, b: Float, a: Float)
   Hsla(h: Float, s: Float, l: Float, a: Float)
 }
 
 /// Type alias for `Colour`
-///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-/// </br>
 ///
 pub type Color =
   Colour
@@ -288,15 +266,6 @@ fn rgba_to_hsla(
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn from_rgb255(r red: Int, g green: Int, b blue: Int) -> Result(Colour, Nil) {
   use r <- result.try(
     red
@@ -336,15 +305,6 @@ pub fn from_rgb255(r red: Int, g green: Int, b blue: Int) -> Result(Colour, Nil)
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn from_rgb(
   r red: Float,
   g green: Float,
@@ -370,15 +330,6 @@ pub fn from_rgb(
 /// }
 /// ```
 /// </details>
-///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
 ///
 pub fn from_rgba(
   r red: Float,
@@ -408,15 +359,6 @@ pub fn from_rgba(
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn from_hsla(
   h hue: Float,
   s saturation: Float,
@@ -445,15 +387,6 @@ pub fn from_hsla(
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn from_hsl(
   h hue: Float,
   s saturation: Float,
@@ -475,15 +408,6 @@ pub fn from_hsl(
 /// }
 /// ```
 /// </details>
-///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
 ///
 pub fn from_rgb_hex(hex: Int) -> Result(Colour, Nil) {
   case hex > 0xffffff || hex < 0 {
@@ -515,15 +439,6 @@ pub fn from_rgb_hex(hex: Int) -> Result(Colour, Nil) {
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn from_rgb_hex_string(hex_string: String) -> Result(Colour, Nil) {
   use hex_int <- result.try(hex_string_to_int(hex_string))
 
@@ -544,15 +459,6 @@ pub fn from_rgb_hex_string(hex_string: String) -> Result(Colour, Nil) {
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn from_rgba_hex_string(hex_string: String) -> Result(Colour, Nil) {
   use hex_int <- result.try(hex_string_to_int(hex_string))
 
@@ -572,15 +478,6 @@ pub fn from_rgba_hex_string(hex_string: String) -> Result(Colour, Nil) {
 /// }
 /// ```
 /// </details>
-///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
 ///
 pub fn from_rgba_hex(hex: Int) -> Result(Colour, Nil) {
   case hex > 0xffffffff || hex < 0 {
@@ -630,15 +527,6 @@ pub fn from_rgba_hex(hex: Int) -> Result(Colour, Nil) {
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn to_rgba(colour: Colour) -> #(Float, Float, Float, Float) {
   case colour {
     Rgba(r, g, b, a) -> #(r, g, b, a)
@@ -660,15 +548,6 @@ pub fn to_rgba(colour: Colour) -> #(Float, Float, Float, Float) {
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn to_hsla(colour: Colour) -> #(Float, Float, Float, Float) {
   case colour {
     Hsla(h, s, l, a) -> #(h, s, l, a)
@@ -688,15 +567,6 @@ pub fn to_hsla(colour: Colour) -> #(Float, Float, Float, Float) {
 /// }
 /// ```
 /// </details>
-///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
 ///
 pub fn to_css_rgba_string(colour: Colour) -> String {
   let #(r, g, b, a) = to_rgba(colour)
@@ -751,15 +621,6 @@ pub fn to_css_rgba_string(colour: Colour) -> String {
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn to_rgba_hex_string(colour: Colour) -> String {
   let hex_string =
     to_rgba_hex(colour)
@@ -784,15 +645,6 @@ pub fn to_rgba_hex_string(colour: Colour) -> String {
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn to_rgb_hex_string(colour: Colour) -> String {
   let hex_string =
     to_rgb_hex(colour)
@@ -816,15 +668,6 @@ pub fn to_rgb_hex_string(colour: Colour) -> String {
 /// }
 /// ```
 /// </details>
-///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
 ///
 pub fn to_rgba_hex(colour: Colour) -> Int {
   let #(r, g, b, a) = to_rgba(colour)
@@ -864,15 +707,6 @@ pub fn to_rgba_hex(colour: Colour) -> Int {
 /// ```
 /// </details>
 ///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
-///
 pub fn to_rgb_hex(colour: Colour) -> Int {
   let #(r, g, b, _) = to_rgba(colour)
 
@@ -898,15 +732,6 @@ pub fn to_rgb_hex(colour: Colour) -> Int {
 /// Encodes a `Colour` value as a Gleam [`Json`](https://hexdocs.pm/gleam_json/gleam/json.html#Json)
 /// value. You'll need this if you want to send a `Colour` value over the network
 /// in a HTTP request or response, for example.
-///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
 ///
 pub fn encode(colour: Colour) -> Json {
   case colour {
@@ -935,15 +760,6 @@ fn encode_hsla(h: Float, s: Float, l: Float, a: Float) -> Json {
 
 /// Attempt to decode some [`Dynamic`](https://hexdocs.pm/gleam_stdlib/gleam/dynamic.html#Dynamic)
 /// value into a `Colour`. Most often you'll use this to decode some JSON.
-///
-/// <div style="position: relative;">
-///     <a style="position: absolute; left: 0;" href="https://github.com/gleam-community/colour/issues">
-///         <small>Spot a typo? Open an issue!</small>
-///     </a>
-///     <a style="position: absolute; right: 0;" href="#">
-///         <small>Back to top ↑</small>
-///     </a>
-/// </div>
 ///
 pub fn decoder() -> decode.Decoder(Colour) {
   decode.one_of(rgba_decoder(), or: [hsla_decoder()])
